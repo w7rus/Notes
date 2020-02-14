@@ -12,6 +12,9 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { FormItempropsComponent } from './form-itemprops/form-itemprops.component';
 import { TableItemsComponent } from './table-items/table-items.component';
+import { PageRegisterComponent } from './page-register/page-register.component';
+import { FormRegisterComponent } from './form-register/form-register.component';
+import { PageLogoutComponent } from './page-logout/page-logout.component';
 
 @NgModule({
   declarations: [
@@ -24,13 +27,19 @@ import { TableItemsComponent } from './table-items/table-items.component';
     NavbarComponent,
     ToolbarComponent,
     FormItempropsComponent,
-    TableItemsComponent
+    TableItemsComponent,
+    PageRegisterComponent,
+    FormRegisterComponent,
+    PageLogoutComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [
+    AppComponent,
+    NavbarComponent
+  ]
 })
 export class AppModule { }
