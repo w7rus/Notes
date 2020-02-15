@@ -1,0 +1,15 @@
+input#fieldPassword {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+input#fieldPasswordRepeat {
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+  margin-top: -1px;
+}
+
+.form-control:focus {
+  position: relative;
+  z-index: 2;
+}
