@@ -46,6 +46,9 @@ namespace NotesWebAPI.Services.Users.Implementation
 
         public IActionResult registerUser(AuthRegisterModel model)
         {
+            if (model.Password != model.PasswordRepeat)
+                return BadRequest("Password do not match!");
+
             var user = new Models.Database.User { Username = model.Username, Password = model.Password };
 
             _usersRepository.addUserWithUsernamePassword(user);

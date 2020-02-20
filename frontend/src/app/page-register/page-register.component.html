@@ -2,18 +2,27 @@
   <div class="d-flex flex-column align-items-center" style="height: 100%;">
     <div class="m-auto text-center p-2">
       <h1 class="h3 mb-3 font-weight-normal">Please sign up</h1>
-      <form class="">
-        <div class="form-group" id="UsernameField">
+      <form class="" [formGroup]="registerForm" (ngSubmit)="register()" novalidate>
+        <div class="form-group" id="usernameField">
           <label for="fieldUsername" class="sr-only">Username</label>
-          <input type="text" class="form-control" id="fieldUsername" placeholder="Username" required="" autofocus="">
+          <input type="text" class="form-control" id="fieldUsername" placeholder="Username" required="" autofocus="" formControlName="username" [ngClass]="{
+            'is-invalid': f.username.invalid && (f.username.dirty || f.username.touched),
+            'is-valid': f.username.valid && (f.username.dirty || f.username.touched)
+          }">
         </div>
         <div class="form-group" id="passwordFields">
           <label for="fieldPassword" class="sr-only">Password</label>
-          <input type="password" class="form-control" id="fieldPassword" placeholder="Password" required="">
-          <label for="fieldPasswordRepeat" class="sr-only">Password</label>
-          <input type="password" class="form-control" id="fieldPasswordRepeat" placeholder="Repeat Password" required="">
+          <input type="password" class="form-control" id="fieldPassword" placeholder="Password" required="" formControlName="password" [ngClass]="{
+            'is-invalid': f.password.invalid && (f.password.dirty || f.password.touched),
+            'is-valid': f.password.valid && (f.password.dirty || f.password.touched)
+          }">
+          <label for="fieldPasswordRepeat" class="sr-only">Repeat Password</label>
+          <input type="password" class="form-control" id="fieldPasswordRepeat" placeholder="Repeat Password" required="" formControlName="passwordRepeat" [ngClass]="{
+            'is-invalid': f.passwordRepeat.invalid && (f.passwordRepeat.dirty || f.passwordRepeat.touched),
+            'is-valid': f.passwordRepeat.valid && (f.passwordRepeat.dirty || f.passwordRepeat.touched)
+          }">
         </div>
-        <button type="submit" class="btn btn-outline-primary btn-block">Sign Up</button>
+        <button type="submit" class="btn btn-outline-primary btn-block" [disabled]="!registerForm.valid">Sign Up</button>
       </form>
     </div>
   </div>

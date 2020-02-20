@@ -6,13 +6,13 @@
         <div class="form-group" id="dataFields">
           <label for="fieldUsername" class="sr-only">Username</label>
           <input type="text" class="form-control" id="fieldUsername" placeholder="Username" required="" autofocus="" formControlName="username" [ngClass]="{
-            'is-invalid': username.invalid && (username.dirty || username.touched),
-            'is-valid': username.valid && (username.dirty || username.touched)
+            'is-invalid': f.username.invalid && (f.username.dirty || f.username.touched),
+            'is-valid': f.username.valid && (f.username.dirty || f.username.touched)
           }">
           <label for="fieldPassword" class="sr-only">Password</label>
           <input type="password" class="form-control" id="fieldPassword" placeholder="Password" required="" formControlName="password" [ngClass]="{
-            'is-invalid': password.invalid && (password.dirty || password.touched),
-            'is-valid': password.valid && (password.dirty || password.touched)
+            'is-invalid': f.password.invalid && (f.password.dirty || f.password.touched),
+            'is-valid': f.password.valid && (f.password.dirty || f.password.touched)
           }">
         </div>
         <div class="custom-control custom-checkbox mb-3">
@@ -21,7 +21,6 @@
         </div>
         <button type="submit" class="btn btn-outline-primary btn-block" [disabled]="!loginForm.valid">Sign In</button>
       </form>
-      <p>{{ loginForm.value | json }}</p>
     </div>
   </div>
 </main>
