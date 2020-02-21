@@ -11,6 +11,8 @@ import { PageLogoutComponent } from './page-logout/page-logout.component'
 
 import { NotFoundComponent } from './not-found/not-found.component'
 
+import { AuthGuard } from './_guards/auth-guard.service';
+
 const routes: Routes = [
   {
     path: '',
@@ -30,7 +32,8 @@ const routes: Routes = [
   },
   {
     path: 'dashboard',
-    component: PageDashboardComponent
+    component: PageDashboardComponent,
+    canActivate: [AuthGuard] 
   },
   {
     path: 'settings',

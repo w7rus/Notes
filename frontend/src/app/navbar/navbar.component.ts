@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Component({
   selector: 'app-navbar',
@@ -7,19 +8,33 @@ import { Component, OnInit } from '@angular/core';
 })
 
 export class NavbarComponent implements OnInit {
+  constructor(private jwtHelper: JwtHelperService) { }
 
-  loggedIn: boolean = false
-  username: string = "unknown"
-  userid: number = -1
-
-  constructor() { }
-
-  ngOnInit(): void {
-    if (localStorage.getItem("jwt") != null)
-      this.loggedIn = true
-    if (localStorage.getItem("username") != null)
-      this.username = localStorage.getItem("username")
-    if (localStorage.getItem("userid") != null)
-      this.userid = parseInt(localStorage.getItem("userid"))
+  isUserAuthenticated() {
+    let token: string = localStorage.getItem("jwt");
+    if (token && !this.jwtHelper.isTokenExpired(token)) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
+
+  getUsername() {
+    let username: string = localStorage.getItem("username")
+    if (username)
+      return username
+    else
+      return "unknown"
+  }
+
+  getUserid() {
+    let userid: string = localStorage.getItem("userid")
+    if (userid)
+      return userid
+    else
+      return "unknown"
+  }
+
+  ngOnInit(): void {}
 }

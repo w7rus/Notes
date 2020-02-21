@@ -51,6 +51,9 @@ namespace NotesWebAPI.Controllers
 
             var note = _context.Notes.Find(id);
 
+            if (note == null)
+                return BadRequest();
+
             if (note.UserId != userId)
                 return BadRequest();
 
@@ -60,7 +63,7 @@ namespace NotesWebAPI.Controllers
             _context.Notes.Update(note);
             _context.SaveChanges();
 
-            return NoContent();
+            return Ok();
         }
 
         [HttpPost]
