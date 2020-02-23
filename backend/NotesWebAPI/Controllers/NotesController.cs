@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NotesWebAPI.Data;
 
@@ -19,6 +21,7 @@ namespace NotesWebAPI.Controllers
             _context = context;
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet]
         public ActionResult<IEnumerable<Models.Database.Note>> NoteList()
         {
@@ -28,6 +31,7 @@ namespace NotesWebAPI.Controllers
             return _context.Notes.Where(n => n.UserId == userId).ToList();
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{id}")]
         public ActionResult<Models.Database.Note> GetNote([Required] int id)
         {
@@ -42,7 +46,7 @@ namespace NotesWebAPI.Controllers
             return note;
         }
 
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPut("{id}")]
         public IActionResult UpdateNote([Required] int id, [Required][FromBody] Models.View.NoteRequestModel model)
         {
@@ -66,6 +70,7 @@ namespace NotesWebAPI.Controllers
             return Ok();
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
         public ActionResult<Models.Database.Note> PostNote([Required][FromBody] Models.View.NoteRequestModel model)
         {
@@ -85,6 +90,7 @@ namespace NotesWebAPI.Controllers
             return Ok(note);
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpDelete("{id}")]
         public ActionResult<Models.Database.Note> DeleteNote([Required] int id)
         {

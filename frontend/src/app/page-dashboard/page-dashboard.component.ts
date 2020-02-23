@@ -32,30 +32,26 @@ export class PageDashboardComponent implements OnInit {
 
   //completed
   isUserAuthenticated() {
-    let token: string = localStorage.getItem("jwt");
-    if (token && !this.jwtHelper.isTokenExpired(token)) {
-      return true;
-    }
-    else {
-      return false;
-    }
+    let token: string = localStorage.getItem("jwt")
+    if (token && !this.jwtHelper.isTokenExpired(token))
+      return true
+    else
+      return false
   }
 
   //completed
   selectNote(id: number) {
     this.selectedNote = id;
-    console.log("Selected note " + id)
     if (this.isUserAuthenticated()) {
       this.http.get("http://localhost:5000/api/notes/" + id, {
         headers: new HttpHeaders({
           "Content-Type": "application/json"
         })
       }).subscribe(response => {
-        let data = (<{id: number, title: string, body: string, userId: number, user: null}>response);
-        console.log(response);
+        let data = (<{id: number, title: string, body: string, userId: number, user: null}>response)
 
-        this.f.title.setValue(data.title);
-        this.f.body.setValue(data.body);
+        this.f.title.setValue(data.title)
+        this.f.body.setValue(data.body)
       }, err => {
         console.log(err)
       });
@@ -64,7 +60,6 @@ export class PageDashboardComponent implements OnInit {
 
   //completed
   updateSelectedNote() {
-    console.log("Will update: " + this.selectedNote)
     if (this.isUserAuthenticated()) {
       this.http.put("http://localhost:5000/api/notes/" + this.selectedNote, {
         "title": this.f.title.value,
@@ -74,12 +69,10 @@ export class PageDashboardComponent implements OnInit {
           "Content-Type": "application/json"
         })
       }).subscribe(response => {
-        console.log(response);
-
-        this.selectedNote = -1;
-        this.f.title.reset();
-        this.f.body.reset();
-        this.refreshNotes();
+        this.selectedNote = -1
+        this.f.title.reset()
+        this.f.body.reset()
+        this.refreshNotes()
       }, err => {
         console.log(err)
       });
@@ -88,15 +81,19 @@ export class PageDashboardComponent implements OnInit {
 
   //completed
   deleteNote(id: number) {
-    console.log("Deleted note " + id)
+    if (id == this.selectedNote)
+    {
+      this.selectedNote = -1;
+      this.f.title.reset();
+      this.f.body.reset();
+    }
     if (this.isUserAuthenticated()) {
       this.http.delete("http://localhost:5000/api/notes/" + id, {
         headers: new HttpHeaders({
           "Content-Type": "application/json"
         })
       }).subscribe(response => {
-        console.log(response);
-        this.refreshNotes();
+        this.refreshNotes()
       }, err => {
         console.log(err)
       });
@@ -111,10 +108,9 @@ export class PageDashboardComponent implements OnInit {
           "Content-Type": "application/json"
         })
       }).subscribe(response => {
-        console.log(response);
         if (updateGlobal)
           this.notesArray = Object.values(response);
-        return response;
+        return Object.values(response);
       }, err => {
         if (updateGlobal)
           this.notesArray = [];
@@ -141,7 +137,6 @@ export class PageDashboardComponent implements OnInit {
           "Content-Type": "application/json"
         })
       }).subscribe(response => {
-        console.log(response);
         this.g.title.reset();
         this.g.body.reset();
         this.refreshNotes();
@@ -159,7 +154,6 @@ export class PageDashboardComponent implements OnInit {
           "Content-Type": "application/json"
         })
       }).subscribe(response => {
-        console.log(response);
         this.notesArray = Object.values(response)
       }, err => {
         console.log(err)
