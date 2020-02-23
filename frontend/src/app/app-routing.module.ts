@@ -12,6 +12,8 @@ import { PageLogoutComponent } from './page-logout/page-logout.component'
 import { NotFoundComponent } from './not-found/not-found.component'
 
 import { AuthGuard } from './_guards/auth-guard.service';
+import { PageNotesListComponent } from './page-dashboard/page-notes-list/page-notes-list.component';
+import { PageNotesEditComponent } from './page-dashboard/page-notes-edit/page-notes-edit.component';
 
 const routes: Routes = [
   {
@@ -33,7 +35,7 @@ const routes: Routes = [
   {
     path: 'dashboard',
     component: PageDashboardComponent,
-    canActivate: [AuthGuard] 
+    canActivate: [AuthGuard]
   },
   {
     path: 'settings',
@@ -42,6 +44,16 @@ const routes: Routes = [
   {
     path: 'logout',
     component: PageLogoutComponent
+  },
+  {
+    path: 'dashboard/notes',
+    component: PageNotesListComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'dashboard/notes/:id',
+    component: PageNotesEditComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'not-found',
