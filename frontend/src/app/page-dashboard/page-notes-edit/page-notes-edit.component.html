@@ -11,7 +11,7 @@
         </div>
         <div class="form-group">
           <label for="noteBody">Body</label>
-          <textarea id="noteBody" class="form-control" rows="3" formControlName="body" [ngClass]="{
+          <textarea id="noteBody" class="form-control" rows="6" formControlName="body" [ngClass]="{
             'is-invalid': updateForm.controls.body.invalid && (updateForm.controls.body.dirty || updateForm.controls.body.touched),
             'is-valid': updateForm.controls.body.valid && (updateForm.controls.body.dirty || updateForm.controls.body.touched)
           }"></textarea>
