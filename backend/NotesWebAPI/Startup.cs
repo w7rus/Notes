@@ -31,8 +31,8 @@ namespace NotesWebAPI
         {
             services.AddDbContext<NotesWebAPIContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             //services.AddScoped<>
-            
-            services.ConfigureAuthentication();
+
+            services.ConfigureAuthentication(Configuration);
             services.ConfigureCors();
             services.ConfigureControllers();
             services.AddScoped<IUsersService, UsersService>();

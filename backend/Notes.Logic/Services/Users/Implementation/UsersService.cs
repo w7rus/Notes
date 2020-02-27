@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Notes.Logic.Models;
 using Notes.Logic.Repositories.Users;
@@ -12,10 +13,12 @@ namespace Notes.Logic.Services.Users.Implementation
     public class UsersService : IUsersService
     {
         private readonly IUsersRepository _usersRepository;
+        private readonly IConfiguration _configuration;
 
-        public UsersService(IUsersRepository usersRepository)
+        public UsersService(IUsersRepository usersRepository, IConfiguration configuration)
         {
             _usersRepository = usersRepository;
+            _configuration = configuration;
         }
 
         public LoginResult LoginUser(string username, string password)
@@ -25,11 +28,11 @@ namespace Notes.Logic.Services.Users.Implementation
             if (user == null)
                 throw new ArgumentException("Invalid login data!");
 
-            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"));
+            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("JWT").GetValue<string>("Key")));
             var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
             var tokeOptions = new JwtSecurityToken(
-                issuer: "http://localhost:5000",
-                audience: "http://localhost:5000",
+                issuer: _configuration.GetSection("JWT").GetValue<string>("Issuer"),
+                audience: _configuration.GetSection("JWT").GetValue<string>("Audience"),
                 claims: new List<Claim>{
                         new Claim("user_id", user.Id.ToString())
                     },
