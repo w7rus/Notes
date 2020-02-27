@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NotesWebAPI.Data;
+using Notes.Logic.Services.Notes;
+using NotesWebAPI.Models.View.Request;
+using NotesWebAPI.Models.View.Response;
 
 namespace NotesWebAPI.Controllers
 {
@@ -14,101 +15,123 @@ namespace NotesWebAPI.Controllers
     [ApiController]
     public class NotesController : ControllerBase
     {
-        private readonly NotesWebAPIContext _context;
+        private readonly INotesService _notesService;
 
-        public NotesController(NotesWebAPIContext context)
+        public NotesController(INotesService notesServiceService)
         {
-            _context = context;
+            _notesService = notesServiceService;
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet]
-        public ActionResult<IEnumerable<Models.Database.Note>> NoteList()
+        public ActionResult<IEnumerable<NoteResponseModel>> NoteList()
         {
-            if (!TryGetUserId(out var userId))
-                return Unauthorized();
+            try
+            {
+                if (!TryGetUserId(out var userId))
+                    return Unauthorized();
 
-            return _context.Notes.Where(n => n.UserId == userId).ToList();
+                return new ActionResult<IEnumerable<NoteResponseModel>>(_notesService.ListNotes(userId).Select(n =>
+                    new NoteResponseModel
+                    {
+                        Body = n.Body,
+                        Id = n.Id,
+                        Title = n.Title
+                    }
+                ));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{id}")]
-        public ActionResult<Models.Database.Note> GetNote([Required] int id)
+        public ActionResult<NoteResponseModel> GetNote([Required] int id)
         {
-            if (!TryGetUserId(out var userId))
-                return Unauthorized();
+            try
+            {
+                if (!TryGetUserId(out var userId))
+                    return Unauthorized();
 
-            var note = _context.Notes.Find(id);
+                var note = _notesService.GetNote(id);
 
-            if (note.UserId != userId)
-                return BadRequest();
+                if (note.UserId != userId)
+                    return BadRequest();
 
-            return note;
+                return new NoteResponseModel
+                {
+                    Body = note.Body,
+                    Id = note.Id,
+                    Title = note.Title
+                };
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPut("{id}")]
-        public IActionResult UpdateNote([Required] int id, [Required][FromBody] Models.View.NoteRequestModel model)
+        public IActionResult UpdateNote([Required] int id, [Required][FromBody] NoteRequestModel model)
         {
-            if (!TryGetUserId(out var userId))
-                return Unauthorized();
+            try
+            {
+                if (!TryGetUserId(out var userId))
+                    return Unauthorized();
 
-            var note = _context.Notes.Find(id);
-
-            if (note == null)
-                return BadRequest();
-
-            if (note.UserId != userId)
-                return BadRequest();
-
-            note.Title = model.Title;
-            note.Body = model.Body;
-
-            _context.Notes.Update(note);
-            _context.SaveChanges();
-
-            return Ok();
+                _notesService.UpdateNote(id, model.Title, model.Body, userId);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
-        public ActionResult<Models.Database.Note> PostNote([Required][FromBody] Models.View.NoteRequestModel model)
+        public ActionResult<NoteResponseModel> PostNote([Required][FromBody] NoteRequestModel model)
         {
-            if (!TryGetUserId(out var userId))
-                return Unauthorized();
-
-            var note = new Models.Database.Note
+            try
             {
-                UserId = userId,
-                Title = model.Title,
-                Body = model.Body
-            };
+                if (!TryGetUserId(out var userId))
+                    return Unauthorized();
 
-            _context.Notes.Add(note);
-            _context.SaveChanges();
+                var note = _notesService.AddNote(model.Title, model.Body, userId);
 
-            return Ok(note);
+                return Ok(new NoteResponseModel
+                {
+                    Body = note.Body,
+                    Id = note.Id,
+                    Title = note.Title
+                });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpDelete("{id}")]
-        public ActionResult<Models.Database.Note> DeleteNote([Required] int id)
+        public IActionResult DeleteNote([Required] int id)
         {
-            var note = _context.Notes.Find(id);
+            try
+            {
+                if (!TryGetUserId(out var userId))
+                    return Unauthorized();
 
-            if (note == null)
-                return NotFound();
+                _notesService.DeleteNote(id, userId);
 
-            if (!TryGetUserId(out var userId))
-                return Unauthorized();
-
-            if (note.UserId != userId)
-                return BadRequest();
-
-            _context.Notes.Remove(note);
-            _context.SaveChanges();
-
-            return Ok();
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         #region Helpers

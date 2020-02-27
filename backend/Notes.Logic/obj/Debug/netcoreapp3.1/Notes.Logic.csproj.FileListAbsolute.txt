@@ -1,0 +1,8 @@
+C:\Users\w7rus\source\repos\NotesWebAPI - (UseDI)\Notes.Logic\obj\Debug\netcoreapp3.1\Notes.Logic.csprojAssemblyReference.cache
+C:\Users\w7rus\source\repos\NotesWebAPI - (UseDI)\Notes.Logic\obj\Debug\netcoreapp3.1\Notes.Logic.AssemblyInfoInputs.cache
+C:\Users\w7rus\source\repos\NotesWebAPI - (UseDI)\Notes.Logic\obj\Debug\netcoreapp3.1\Notes.Logic.AssemblyInfo.cs
+C:\Users\w7rus\source\repos\NotesWebAPI - (UseDI)\Notes.Logic\bin\Debug\netcoreapp3.1\Notes.Logic.deps.json
+C:\Users\w7rus\source\repos\NotesWebAPI - (UseDI)\Notes.Logic\bin\Debug\netcoreapp3.1\Notes.Logic.dll
+C:\Users\w7rus\source\repos\NotesWebAPI - (UseDI)\Notes.Logic\bin\Debug\netcoreapp3.1\Notes.Logic.pdb
+C:\Users\w7rus\source\repos\NotesWebAPI - (UseDI)\Notes.Logic\obj\Debug\netcoreapp3.1\Notes.Logic.dll
+C:\Users\w7rus\source\repos\NotesWebAPI - (UseDI)\Notes.Logic\obj\Debug\netcoreapp3.1\Notes.Logic.pdb

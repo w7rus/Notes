@@ -1,17 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using NotesWebAPI.Data;
-using NotesWebAPI.Services.Users;
+using Notes.Logic.Services.Users;
+using NotesWebAPI.Models.View.Request;
+using NotesWebAPI.Models.View.Response;
 
 namespace NotesWebAPI.Controllers
 {
@@ -19,27 +12,44 @@ namespace NotesWebAPI.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IUsersService _users;
+        private readonly IUsersService _usersService;
 
-        public AuthController(IUsersService depUsers)
+        public AuthController(IUsersService usersService)
         {
-            _users = depUsers;
+            _usersService = usersService;
         }
 
         // Send JWT token on successful login data
         [HttpPost, Route("login")]
         [AllowAnonymous]
-        public IActionResult Login([Required][FromBody] Models.View.AuthLoginModel model)
+        public ActionResult<NoteResponseModel> Login([Required][FromBody] LoginRequestModel model)
         {
-            return _users.loginUser(model);
+            try
+            {
+                return Ok(_usersService.LoginUser(model.Username, model.Password));
+            }
+            catch (Exception e)
+            {
+                //TODO: add Logs
+                return BadRequest(e.Message);
+            }
         }
 
         // Add new user to the database
         [HttpPost, Route("register")]
         [AllowAnonymous]
-        public IActionResult Register([Required][FromBody] Models.View.AuthRegisterModel model)
+        public IActionResult Register([Required][FromBody] RegisterRequestModel model)
         {
-            return _users.registerUser(model);
+            try
+            {
+                _usersService.RegisterUser(model.Username, model.Password, model.PasswordRepeat);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                //TODO: add Logs
+                return BadRequest(e.Message);
+            }
         }
     }
 }

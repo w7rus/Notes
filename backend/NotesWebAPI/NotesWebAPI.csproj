@@ -5,15 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20200217115409_MadeUsernameUnique1.cs" />
-    <Compile Remove="Migrations\20200217115409_MadeUsernameUnique1.Designer.cs" />
-    <Compile Remove="Migrations\20200217120306_AddedNotes.cs" />
-    <Compile Remove="Migrations\20200217120306_AddedNotes.Designer.cs" />
-    <Compile Remove="Migrations\20200217120341_AddedNotes.cs" />
-    <Compile Remove="Migrations\20200217120341_AddedNotes.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.1">
@@ -24,8 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Repository\Notes\" />
-    <Folder Include="Services\Notes\" />
+    <ProjectReference Include="..\Notes.Logic\Notes.Logic.csproj" />
   </ItemGroup>
 
 
