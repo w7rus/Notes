@@ -2,9 +2,9 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Notes.Logic.Models;
 using Notes.Logic.Services.Users;
 using NotesWebAPI.Models.View.Request;
-using NotesWebAPI.Models.View.Response;
 
 namespace NotesWebAPI.Controllers
 {
@@ -22,7 +22,7 @@ namespace NotesWebAPI.Controllers
         // Send JWT token on successful login data
         [HttpPost, Route("login")]
         [AllowAnonymous]
-        public ActionResult<NoteResponseModel> Login([Required][FromBody] LoginRequestModel model)
+        public ActionResult<LoginResult> Login([Required][FromBody] LoginRequestModel model)
         {
             try
             {

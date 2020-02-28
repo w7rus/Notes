@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Notes.Logic.Models.Database;
 using Notes.Logic.Repositories.Notes;
 
@@ -17,6 +18,40 @@ namespace Notes.Logic.Services.Notes.Implementation
         public IEnumerable<Note> ListNotes(int userid)
         {
             return _notesRepository.GetNotes(userid);
+        }
+
+        public IEnumerable<Note> ListNotes(int userid, string search, int sorting, int display, int page)
+        {
+            var notes = _notesRepository.GetNotes(userid);
+
+            //Sorting
+            switch (sorting)
+            {
+                default:
+                    notes = notes.OrderBy(n => n.Title);
+                    break;
+
+                case 0:
+                    notes = notes.OrderBy(n => n.Title);
+                    break;
+
+                case 1:
+                    notes = notes.OrderByDescending(n => n.Title);
+                    break;
+            }
+
+            //Search
+
+            if (!string.IsNullOrEmpty(search))
+                notes = notes.Where(n => n.Title.Contains(search));
+
+            //Pagination
+
+            var notesCount = Convert.ToInt32(Math.Ceiling(notes.Count() / (decimal)display));
+
+            notes = notes.Skip(display * (page)).Take(display);
+
+            return notes;
         }
 
         public Note GetNote(int noteid)
@@ -65,6 +100,39 @@ namespace Notes.Logic.Services.Notes.Implementation
                 throw new InvalidOperationException("User does not own this note!");
 
             _notesRepository.DeleteNote(note);
+        }
+
+        public int GetNoteCount(int userid)
+        {
+            return _notesRepository.GetNotes(userid).Count();
+        }
+
+        public int GetNoteCount(int userid, string search, int sorting)
+        {
+            var notes = _notesRepository.GetNotes(userid);
+
+            //Sorting
+            switch (sorting)
+            {
+                default:
+                    notes = notes.OrderBy(n => n.Title);
+                    break;
+
+                case 0:
+                    notes = notes.OrderBy(n => n.Title);
+                    break;
+
+                case 1:
+                    notes = notes.OrderByDescending(n => n.Title);
+                    break;
+            }
+
+            //Search
+
+            if (!string.IsNullOrEmpty(search))
+                notes = notes.Where(n => n.Title.Contains(search));
+
+            return notes.Count();
         }
     }
 }

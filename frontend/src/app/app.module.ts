@@ -12,7 +12,6 @@ import { AppComponent } from './app.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { PageLoginComponent } from './page-login/page-login.component';
 import { PageRegisterComponent } from './page-register/page-register.component';
-import { PageDashboardComponent } from './page-dashboard/page-dashboard.component';
 import { PageNotesListComponent } from './page-dashboard/page-notes-list/page-notes-list.component';
 import { PageNotesEditComponent } from './page-dashboard/page-notes-edit/page-notes-edit.component';
 
@@ -26,7 +25,6 @@ export function tokenGetter() {
     NavbarComponent,
     PageLoginComponent,
     PageRegisterComponent,
-    PageDashboardComponent,
     PageNotesListComponent,
     PageNotesEditComponent
   ],

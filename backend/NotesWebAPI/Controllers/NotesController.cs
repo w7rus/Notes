@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Notes.Logic.Services.Notes;
 using NotesWebAPI.Models.View.Request;
-using NotesWebAPI.Models.View.Response;
+using Notes.Logic.Models;
 
 namespace NotesWebAPI.Controllers
 {
@@ -24,15 +24,39 @@ namespace NotesWebAPI.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet]
-        public ActionResult<IEnumerable<NoteResponseModel>> NoteList()
+        public ActionResult<IEnumerable<NoteResult>> NoteList()
         {
             try
             {
                 if (!TryGetUserId(out var userId))
                     return Unauthorized();
 
-                return new ActionResult<IEnumerable<NoteResponseModel>>(_notesService.ListNotes(userId).Select(n =>
-                    new NoteResponseModel
+                return new ActionResult<IEnumerable<NoteResult>>(_notesService.ListNotes(userId).Select(n =>
+                    new NoteResult
+                    {
+                        Body = n.Body,
+                        Id = n.Id,
+                        Title = n.Title
+                    }
+                ));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost("list")]
+        public ActionResult<IEnumerable<NoteResult>> NoteListFiltered([Required][FromBody] SearchRequestModel model)
+        {
+            try
+            {
+                if (!TryGetUserId(out var userId))
+                    return Unauthorized();
+
+                return new ActionResult<IEnumerable<NoteResult>>(_notesService.ListNotes(userId, model.Search, model.Sorting, model.Display, model.Page).Select(n =>
+                    new NoteResult
                     {
                         Body = n.Body,
                         Id = n.Id,
@@ -48,7 +72,7 @@ namespace NotesWebAPI.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{id}")]
-        public ActionResult<NoteResponseModel> GetNote([Required] int id)
+        public ActionResult<NoteResult> GetNote([Required] int id)
         {
             try
             {
@@ -60,7 +84,7 @@ namespace NotesWebAPI.Controllers
                 if (note.UserId != userId)
                     return BadRequest();
 
-                return new NoteResponseModel
+                return new NoteResult
                 {
                     Body = note.Body,
                     Id = note.Id,
@@ -93,7 +117,7 @@ namespace NotesWebAPI.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
-        public ActionResult<NoteResponseModel> PostNote([Required][FromBody] NoteRequestModel model)
+        public ActionResult<NoteResult> PostNote([Required][FromBody] NoteRequestModel model)
         {
             try
             {
@@ -102,7 +126,7 @@ namespace NotesWebAPI.Controllers
 
                 var note = _notesService.AddNote(model.Title, model.Body, userId);
 
-                return Ok(new NoteResponseModel
+                return Ok(new NoteResult
                 {
                     Body = note.Body,
                     Id = note.Id,
@@ -127,6 +151,40 @@ namespace NotesWebAPI.Controllers
                 _notesService.DeleteNote(id, userId);
 
                 return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpGet("count")]
+        public IActionResult NoteCount()
+        {
+            try
+            {
+                if (!TryGetUserId(out var userId))
+                    return Unauthorized();
+
+                return Ok(_notesService.GetNoteCount(userId));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost("countFiltered")]
+        public IActionResult NoteCountFiltered([Required][FromBody] SearchRequestModel model)
+        {
+            try
+            {
+                if (!TryGetUserId(out var userId))
+                    return Unauthorized();
+
+                return Ok(_notesService.GetNoteCount(userId, model.Search, model.Sorting));
             }
             catch (Exception e)
             {

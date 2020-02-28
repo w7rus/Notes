@@ -9,9 +9,16 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./page-notes-list.component.css']
 })
 export class PageNotesListComponent implements OnInit {
+  
+  addForm: FormGroup;
+  searchForm: FormGroup;
+  pageForm: FormGroup;
 
   items: any[];
-  addForm: FormGroup;
+  itemsCount: number;
+  pageSelected: number;
+  pageCount: number;
+  pageDisplays: number[] = [5, 10, 20, 30, 40, 50]
 
   constructor(
     private http: HttpClient,
@@ -27,22 +34,22 @@ export class PageNotesListComponent implements OnInit {
       return false
   }
 
-  getNotes(): any {
-    if (this.isUserAuthenticated()) {
-      this.http.get("http://localhost:5000/api/notes", {
-        headers: new HttpHeaders({
-          "Content-Type": "application/json"
-        })
-      }).subscribe(response => {
-        this.items = Object.values(response);
-        return Object.values(response);
-      }, err => {
-        this.items = [];
-        console.log(err)
-        return [];
-      });
-    }
-  }
+  // getNotes(): any {
+  //   if (this.isUserAuthenticated()) {
+  //     this.http.get("http://localhost:5000/api/notes", {
+  //       headers: new HttpHeaders({
+  //         "Content-Type": "application/json"
+  //       })
+  //     }).subscribe(response => {
+  //       this.items = Object.values(response);
+  //       return Object.values(response);
+  //     }, err => {
+  //       this.items = [];
+  //       console.log(err)
+  //       return [];
+  //     });
+  //   }
+  // }
 
   addNoteModalReset() {
     this.addForm.controls.title.reset();
@@ -60,7 +67,7 @@ export class PageNotesListComponent implements OnInit {
         })
       }).subscribe(response => {
         this.addNoteModalReset();
-        this.getNotes();
+        this.searchNotes();
       }, err => {
         console.log(err)
       });
@@ -74,16 +81,45 @@ export class PageNotesListComponent implements OnInit {
           "Content-Type": "application/json"
         })
       }).subscribe(response => {
-        this.getNotes()
+        this.searchNotes();
       }, err => {
         console.log(err)
       });
     }
   }
 
-  ngOnInit(): void {
+  //--
+
+  searchNotes(page?: number) {
+    page = (page === undefined) ? 0 : page
+
+    this.pageSelected = page;
+
     if (this.isUserAuthenticated()) {
-      this.http.get("http://localhost:5000/api/notes", {
+      // Get notes count with specified filters
+      this.http.post("http://localhost:5000/api/notes/countFiltered", {
+        "search": this.searchForm.controls.notesSearch.value,
+        "sorting": (this.searchForm.controls.notesSorting.value == "Ascending") ? 0 : 1,
+      }, {
+        headers: new HttpHeaders({
+          "Content-Type": "application/json"
+        })
+      }).subscribe(response => {
+        this.itemsCount = <number>response;
+        this.pageCount = Math.ceil(this.itemsCount / parseInt(this.pageForm.controls.notesDisplay.value));
+      }, err => {
+        console.log(err)
+        this.itemsCount = 0;
+        this.pageCount = Math.ceil(this.itemsCount / parseInt(this.pageForm.controls.notesDisplay.value));
+      });
+
+      // Display required page with specified filters
+      this.http.post("http://localhost:5000/api/notes/list", {
+        "search": this.searchForm.controls.notesSearch.value,
+        "sorting": (this.searchForm.controls.notesSorting.value == "Ascending") ? 0 : 1,
+        "display": parseInt(this.pageForm.controls.notesDisplay.value),
+        "page": this.pageSelected,
+      }, {
         headers: new HttpHeaders({
           "Content-Type": "application/json"
         })
@@ -94,11 +130,22 @@ export class PageNotesListComponent implements OnInit {
         this.items = [];
       });
     }
+  }
 
+  ngOnInit(): void {
     this.addForm = this.formBuilder.group({
       title: ['', [Validators.required]],
       body: ['', [Validators.required]],
     });
+    this.searchForm = this.formBuilder.group({
+      notesSearch: ['', []],
+      notesSorting: ['Ascending', [Validators.required]],
+    });
+    this.pageForm = this.formBuilder.group({
+      notesDisplay: [10, [Validators.required, Validators.min(5), Validators.max(50)]],
+    });
+
+    this.searchNotes(0);
   }
 
 }
