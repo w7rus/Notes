@@ -13,6 +13,6 @@ namespace Notes.Logic.Services.Notes
         public void DeleteNote(int noteid, int userid);
 
         public int GetNoteCount(int userid);
-        public int GetNoteCount(int userid, string search, int sorting);
+        public int GetNoteCount(int userid, string search);
     }
 }

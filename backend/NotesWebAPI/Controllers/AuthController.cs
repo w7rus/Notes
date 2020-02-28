@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Notes.Logic.Models;
 using Notes.Logic.Services.Users;
 using NotesWebAPI.Models.View.Request;
+using Serilog;
 
 namespace NotesWebAPI.Controllers
 {
@@ -26,11 +27,14 @@ namespace NotesWebAPI.Controllers
         {
             try
             {
-                return Ok(_usersService.LoginUser(model.Username, model.Password));
+                Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Logging in @{model.Username}");
+                var user = _usersService.LoginUser(model.Username, model.Password);
+                Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Successfully logged in @{user.Username}[{user.UserID}]");
+                return Ok(user);
             }
             catch (Exception e)
             {
-                //TODO: add Logs
+                Log.Error(e, $"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] " + e.Message);
                 return BadRequest(e.Message);
             }
         }
@@ -42,12 +46,14 @@ namespace NotesWebAPI.Controllers
         {
             try
             {
+                Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Signing up @{model.Username}");
                 _usersService.RegisterUser(model.Username, model.Password, model.PasswordRepeat);
+                Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Successfully registered @{model.Username}");
                 return Ok();
             }
             catch (Exception e)
             {
-                //TODO: add Logs
+                Log.Error(e, $"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] " + e.Message);
                 return BadRequest(e.Message);
             }
         }

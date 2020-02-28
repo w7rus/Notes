@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Notes.Logic.Services.Notes;
 using NotesWebAPI.Models.View.Request;
 using Notes.Logic.Models;
+using Serilog;
 
 namespace NotesWebAPI.Controllers
 {
@@ -29,9 +30,16 @@ namespace NotesWebAPI.Controllers
             try
             {
                 if (!TryGetUserId(out var userId))
+                {
+                    Log.Warning($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Required field \"user_id\" is not found in JWT from");
                     return Unauthorized();
+                }
 
-                return new ActionResult<IEnumerable<NoteResult>>(_notesService.ListNotes(userId).Select(n =>
+                var notes = _notesService.ListNotes(userId);
+
+                Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Sending {notes.Count()} notes[{string.Join(", ", notes.Select(n => n.Id))}] to user[{userId}]");
+
+                return new ActionResult<IEnumerable<NoteResult>>(notes.Select(n =>
                     new NoteResult
                     {
                         Body = n.Body,
@@ -42,6 +50,7 @@ namespace NotesWebAPI.Controllers
             }
             catch (Exception e)
             {
+                Log.Error(e, $"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] " + e.Message);
                 return BadRequest(e.Message);
             }
         }
@@ -53,9 +62,16 @@ namespace NotesWebAPI.Controllers
             try
             {
                 if (!TryGetUserId(out var userId))
+                {
+                    Log.Warning($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Required field \"user_id\" is not found in JWT from");
                     return Unauthorized();
+                }
 
-                return new ActionResult<IEnumerable<NoteResult>>(_notesService.ListNotes(userId, model.Search, model.Sorting, model.Display, model.Page).Select(n =>
+                var notes = _notesService.ListNotes(userId, model.Search, model.Sorting, model.Display, model.Page);
+
+                Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Sending {notes.Count()} notes[{string.Join(", ", notes.Select(n => n.Id))}] filters:[\"{model.Search}\", {model.Sorting}, {model.Display}, {model.Page}] to user[{userId}]");
+
+                return new ActionResult<IEnumerable<NoteResult>>(notes.Select(n =>
                     new NoteResult
                     {
                         Body = n.Body,
@@ -66,6 +82,7 @@ namespace NotesWebAPI.Controllers
             }
             catch (Exception e)
             {
+                Log.Error(e, $"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] " + e.Message);
                 return BadRequest(e.Message);
             }
         }
@@ -77,12 +94,20 @@ namespace NotesWebAPI.Controllers
             try
             {
                 if (!TryGetUserId(out var userId))
+                {
+                    Log.Warning($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Required field \"user_id\" is not found in JWT from");
                     return Unauthorized();
+                }
 
                 var note = _notesService.GetNote(id);
 
                 if (note.UserId != userId)
+                {
+                    Log.Warning($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] User[{userId}] does not have permissions to operate with note[{note.UserId}]");
                     return BadRequest();
+                }
+
+                Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Sending note[{note.Id}] to user[{userId}]");
 
                 return new NoteResult
                 {
@@ -93,6 +118,7 @@ namespace NotesWebAPI.Controllers
             }
             catch (Exception e)
             {
+                Log.Error(e, $"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] " + e.Message);
                 return BadRequest(e.Message);
             }
         }
@@ -104,27 +130,39 @@ namespace NotesWebAPI.Controllers
             try
             {
                 if (!TryGetUserId(out var userId))
+                {
+                    Log.Warning($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Required field \"user_id\" is not found in JWT from");
                     return Unauthorized();
+                }
 
                 _notesService.UpdateNote(id, model.Title, model.Body, userId);
+
+                Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Successfully updated note[{id}] of user[{userId}]");
+
                 return Ok();
             }
             catch (Exception e)
             {
+                Log.Error(e, $"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] " + e.Message);
                 return BadRequest(e.Message);
             }
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
-        public ActionResult<NoteResult> PostNote([Required][FromBody] NoteRequestModel model)
+        public ActionResult<NoteResult> AddNote([Required][FromBody] NoteRequestModel model)
         {
             try
             {
                 if (!TryGetUserId(out var userId))
+                {
+                    Log.Warning($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Required field \"user_id\" is not found in JWT from");
                     return Unauthorized();
+                }
 
                 var note = _notesService.AddNote(model.Title, model.Body, userId);
+
+                Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Successfully added note[{note.Id}] of user[{userId}]");
 
                 return Ok(new NoteResult
                 {
@@ -135,6 +173,7 @@ namespace NotesWebAPI.Controllers
             }
             catch (Exception e)
             {
+                Log.Error(e, $"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] " + e.Message);
                 return BadRequest(e.Message);
             }
         }
@@ -146,14 +185,20 @@ namespace NotesWebAPI.Controllers
             try
             {
                 if (!TryGetUserId(out var userId))
+                {
+                    Log.Warning($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Required field \"user_id\" is not found in JWT from");
                     return Unauthorized();
+                }
 
                 _notesService.DeleteNote(id, userId);
+
+                Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Successfully deleted note[{id}] of user[{userId}]");
 
                 return Ok();
             }
             catch (Exception e)
             {
+                Log.Error(e, $"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] " + e.Message);
                 return BadRequest(e.Message);
             }
         }
@@ -165,12 +210,20 @@ namespace NotesWebAPI.Controllers
             try
             {
                 if (!TryGetUserId(out var userId))
+                {
+                    Log.Warning($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Required field \"user_id\" is not found in JWT from");
                     return Unauthorized();
+                }
 
-                return Ok(_notesService.GetNoteCount(userId));
+                var count = _notesService.GetNoteCount(userId);
+
+                Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Sending int[{count}] to user[{userId}]");
+
+                return Ok(count);
             }
             catch (Exception e)
             {
+                Log.Error(e, $"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] " + e.Message);
                 return BadRequest(e.Message);
             }
         }
@@ -182,12 +235,21 @@ namespace NotesWebAPI.Controllers
             try
             {
                 if (!TryGetUserId(out var userId))
+                {
+                    Log.Warning($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Required field \"user_id\" is not found in JWT from");
                     return Unauthorized();
+                }
 
-                return Ok(_notesService.GetNoteCount(userId, model.Search, model.Sorting));
+                var count = _notesService.GetNoteCount(userId, model.Search);
+
+                Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Sending int[{count}] filters:[\"{model.Search}\"] to user[{userId}]");
+
+
+                return Ok(count);
             }
             catch (Exception e)
             {
+                Log.Error(e, $"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] " + e.Message);
                 return BadRequest(e.Message);
             }
         }

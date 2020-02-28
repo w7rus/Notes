@@ -78,10 +78,10 @@ namespace Notes.Logic.Services.Notes.Implementation
             var note = _notesRepository.GetNote(noteid);
 
             if (note == null)
-                throw new ArgumentException("Invalid note data!");
+                throw new ArgumentException($"Note[{noteid}] does not exists!");
 
             if (note.UserId != userid)
-                throw new InvalidOperationException("User does not own this note!");
+                throw new InvalidOperationException($"User[{userid}] does not have permissions to operate with note[{note.UserId}]");
 
             note.Title = title;
             note.Body = body;
@@ -94,10 +94,10 @@ namespace Notes.Logic.Services.Notes.Implementation
             var note = _notesRepository.GetNote(noteid);
 
             if (note == null)
-                throw new ArgumentException("Invalid note data!");
+                throw new ArgumentException($"Note[{noteid}] does not exists!");
 
             if (note.UserId != userid)
-                throw new InvalidOperationException("User does not own this note!");
+                throw new InvalidOperationException($"User[{userid}] does not have permissions to operate with note[{note.UserId}]");
 
             _notesRepository.DeleteNote(note);
         }
@@ -107,25 +107,9 @@ namespace Notes.Logic.Services.Notes.Implementation
             return _notesRepository.GetNotes(userid).Count();
         }
 
-        public int GetNoteCount(int userid, string search, int sorting)
+        public int GetNoteCount(int userid, string search)
         {
             var notes = _notesRepository.GetNotes(userid);
-
-            //Sorting
-            switch (sorting)
-            {
-                default:
-                    notes = notes.OrderBy(n => n.Title);
-                    break;
-
-                case 0:
-                    notes = notes.OrderBy(n => n.Title);
-                    break;
-
-                case 1:
-                    notes = notes.OrderByDescending(n => n.Title);
-                    break;
-            }
 
             //Search
 

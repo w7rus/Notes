@@ -251,7 +251,6 @@ C:\Users\w7rus\source\repos\NotesWebAPI - (UseDI)\NotesWebAPI\bin\Debug\netcorea
 C:\Users\w7rus\source\repos\NotesWebAPI - (UseDI)\NotesWebAPI\obj\Debug\netcoreapp3.1\NotesWebAPI.csprojAssemblyReference.cache
 C:\Users\w7rus\source\repos\NotesWebAPI - (UseDI)\NotesWebAPI\obj\Debug\netcoreapp3.1\staticwebassets\NotesWebAPI.StaticWebAssets.Manifest.cache
 C:\Users\w7rus\source\repos\NotesWebAPI - (UseDI)\NotesWebAPI\obj\Debug\netcoreapp3.1\staticwebassets\NotesWebAPI.StaticWebAssets.xml
-C:\Users\w7rus\source\repos\NotesWebAPI - (UseDI)\NotesWebAPI\obj\Debug\netcoreapp3.1\NotesWebAPI.MvcApplicationPartsAssemblyInfo.cache
 C:\Users\w7rus\source\repos\NotesWebAPI - (UseDI)\NotesWebAPI\obj\Debug\netcoreapp3.1\NotesWebAPI.AssemblyInfoInputs.cache
 C:\Users\w7rus\source\repos\NotesWebAPI - (UseDI)\NotesWebAPI\obj\Debug\netcoreapp3.1\NotesWebAPI.AssemblyInfo.cs
 C:\Users\w7rus\source\repos\NotesWebAPI - (UseDI)\NotesWebAPI\obj\Debug\netcoreapp3.1\NotesWebAPI.RazorTargetAssemblyInfo.cache
@@ -260,3 +259,10 @@ C:\Users\w7rus\source\repos\NotesWebAPI - (UseDI)\NotesWebAPI\obj\Debug\netcorea
 C:\Users\w7rus\source\repos\NotesWebAPI - (UseDI)\NotesWebAPI\obj\Debug\netcoreapp3.1\NotesWebAPI.pdb
 C:\Users\w7rus\source\repos\NotesWebAPI - (UseDI)\NotesWebAPI\bin\Debug\netcoreapp3.1\Notes.Logic.dll
 C:\Users\w7rus\source\repos\NotesWebAPI - (UseDI)\NotesWebAPI\bin\Debug\netcoreapp3.1\Notes.Logic.pdb
+C:\Users\w7rus\source\repos\NotesWebAPI - (UseDI)\NotesWebAPI\bin\Debug\netcoreapp3.1\Serilog.dll
+C:\Users\w7rus\source\repos\NotesWebAPI - (UseDI)\NotesWebAPI\bin\Debug\netcoreapp3.1\Serilog.Sinks.Console.dll
+C:\Users\w7rus\source\repos\NotesWebAPI - (UseDI)\NotesWebAPI\bin\Debug\netcoreapp3.1\Serilog.Sinks.File.dll
+C:\Users\w7rus\source\repos\NotesWebAPI - (UseDI)\NotesWebAPI\bin\Debug\netcoreapp3.1\Microsoft.DotNet.PlatformAbstractions.dll
+C:\Users\w7rus\source\repos\NotesWebAPI - (UseDI)\NotesWebAPI\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyModel.dll
+C:\Users\w7rus\source\repos\NotesWebAPI - (UseDI)\NotesWebAPI\bin\Debug\netcoreapp3.1\Serilog.Settings.Configuration.dll
+C:\Users\w7rus\source\repos\NotesWebAPI - (UseDI)\NotesWebAPI\obj\Debug\netcoreapp3.1\NotesWebAPI.MvcApplicationPartsAssemblyInfo.cache
