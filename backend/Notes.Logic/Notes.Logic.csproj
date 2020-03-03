@@ -5,6 +5,29 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200303082207_SharingProperties.cs" />
+    <Compile Remove="Migrations\20200303082207_SharingProperties.Designer.cs" />
+    <Compile Remove="Migrations\20200303082519_SharingProperties.cs" />
+    <Compile Remove="Migrations\20200303082519_SharingProperties.Designer.cs" />
+    <Compile Remove="Migrations\20200303083913_SharingProperties2.cs" />
+    <Compile Remove="Migrations\20200303083913_SharingProperties2.Designer.cs" />
+    <Compile Remove="Migrations\20200303084005_SharingProperties.cs" />
+    <Compile Remove="Migrations\20200303084005_SharingProperties.Designer.cs" />
+    <Compile Remove="Migrations\20200303084152_SharingProperties.cs" />
+    <Compile Remove="Migrations\20200303084152_SharingProperties.Designer.cs" />
+    <Compile Remove="Migrations\20200303084515_SharingProperties.cs" />
+    <Compile Remove="Migrations\20200303084515_SharingProperties.Designer.cs" />
+    <Compile Remove="Migrations\20200303084630_SharingPropertiesUserIdNullable.cs" />
+    <Compile Remove="Migrations\20200303084630_SharingPropertiesUserIdNullable.Designer.cs" />
+    <Compile Remove="Migrations\20200303084654_SharingPropertiesUserIdNoteIdUnique.cs" />
+    <Compile Remove="Migrations\20200303084654_SharingPropertiesUserIdNoteIdUnique.Designer.cs" />
+    <Compile Remove="Migrations\20200303090523_SharingProperties.cs" />
+    <Compile Remove="Migrations\20200303090523_SharingProperties.Designer.cs" />
+    <Compile Remove="Migrations\20200303093602_SharingProperties.cs" />
+    <Compile Remove="Migrations\20200303093602_SharingProperties.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.1" />
