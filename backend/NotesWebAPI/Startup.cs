@@ -53,6 +53,8 @@ namespace NotesWebAPI
             app.ConfigureCors();
             app.ConfigureAuthentication();
 
+            app.EnsureMigrationOfContext<NotesWebAPIContext>();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

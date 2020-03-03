@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace NotesWebAPI.Extensions
 {
@@ -15,6 +13,16 @@ namespace NotesWebAPI.Extensions
         public static void ConfigureAuthentication(this IApplicationBuilder app)
         {
             app.UseAuthentication();
+        }
+
+        public static void EnsureMigrationOfContext<T>(this IApplicationBuilder app) where T : DbContext
+        {
+            using (var serviceScope = app.ApplicationServices.CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetService<T>();
+
+                context.Database.EnsureCreated();
+            }
         }
     }
 }
