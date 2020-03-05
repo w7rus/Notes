@@ -6,6 +6,12 @@ namespace NotesWebAPI.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<bool>(
+                name: "IsSystem",
+                table: "Users",
+                nullable: false,
+                defaultValue: false);
+
             migrationBuilder.CreateTable(
                 name: "Sharing",
                 columns: table => new
@@ -34,8 +40,8 @@ namespace NotesWebAPI.Migrations
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "Password", "Username" },
-                values: new object[] { 1, null, "public" });
+                columns: new[] { "Id", "IsSystem", "Password", "Username" },
+                values: new object[] { 1, true, null, "public" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Sharing_UserId",
@@ -52,6 +58,10 @@ namespace NotesWebAPI.Migrations
                 table: "Users",
                 keyColumn: "Id",
                 keyValue: 1);
+
+            migrationBuilder.DropColumn(
+                name: "IsSystem",
+                table: "Users");
         }
     }
 }

@@ -28,6 +28,9 @@ namespace Notes.Logic.Services.Users.Implementation
             if (user == null)
                 throw new ArgumentException("Invalid login data!");
 
+            if (user.IsSystem)
+                throw new InvalidOperationException("Specified user is system reserved!");
+
             var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("JWT").GetValue<string>("Key")));
             var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
             var tokeOptions = new JwtSecurityToken(

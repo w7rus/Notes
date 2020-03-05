@@ -69,6 +69,9 @@ namespace NotesWebAPI.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<bool>("IsSystem")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
 
@@ -87,6 +90,7 @@ namespace NotesWebAPI.Migrations
                         new
                         {
                             Id = 1,
+                            IsSystem = true,
                             Username = "public"
                         });
                 });

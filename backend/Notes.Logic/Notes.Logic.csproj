@@ -25,6 +25,14 @@
     <Compile Remove="Migrations\20200303090523_SharingProperties.Designer.cs" />
     <Compile Remove="Migrations\20200303093602_SharingProperties.cs" />
     <Compile Remove="Migrations\20200303093602_SharingProperties.Designer.cs" />
+    <Compile Remove="Migrations\20200303105036_SharingProperties.cs" />
+    <Compile Remove="Migrations\20200303105036_SharingProperties.Designer.cs" />
+    <Compile Remove="Migrations\20200305071953_UserFieldIsSystem.cs" />
+    <Compile Remove="Migrations\20200305071953_UserFieldIsSystem.Designer.cs" />
+    <Compile Remove="Migrations\20200305093005_SharingProperties.cs" />
+    <Compile Remove="Migrations\20200305093005_SharingProperties.Designer.cs" />
+    <Compile Remove="Migrations\20200305094309_SharingPropertiesOnDelete.cs" />
+    <Compile Remove="Migrations\20200305094309_SharingPropertiesOnDelete.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

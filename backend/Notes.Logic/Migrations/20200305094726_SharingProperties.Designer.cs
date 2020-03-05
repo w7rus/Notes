@@ -9,7 +9,7 @@ using Notes.Logic.Data;
 namespace NotesWebAPI.Migrations
 {
     [DbContext(typeof(NotesWebAPIContext))]
-    [Migration("20200303105036_SharingProperties")]
+    [Migration("20200305094726_SharingProperties")]
     partial class SharingProperties
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -71,6 +71,9 @@ namespace NotesWebAPI.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<bool>("IsSystem")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
 
@@ -89,6 +92,7 @@ namespace NotesWebAPI.Migrations
                         new
                         {
                             Id = 1,
+                            IsSystem = true,
                             Username = "public"
                         });
                 });
