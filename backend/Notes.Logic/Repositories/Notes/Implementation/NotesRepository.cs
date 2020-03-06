@@ -18,9 +18,11 @@ namespace Notes.Logic.Repositories.Notes.Implementation
         }
 
         #region nonShared
-        public async Task<IEnumerable<Note>> GetNotes(int userId)
+        public async Task<ICollection<Note>> GetNotes(int userId)
         {
-            return await _context.Notes.Where(n => n.UserId == userId).ToListAsync();
+            return await _context.Notes
+                .Where(n => n.UserId == userId)
+                .ToListAsync();
         }
 
         public async Task<Note> GetNote(int noteId)
@@ -50,15 +52,14 @@ namespace Notes.Logic.Repositories.Notes.Implementation
         #endregion
 
         #region Shared
-        public async Task<IEnumerable<Note>> GetSharedNotes(int userId)
+        public async Task<ICollection<Note>> GetSharedNotes(int userId)
         {
-            var shares = _context.Sharing.Where(s => s.UserId == userId);
+            var shares = _context.Sharing.Where(s => s.UserId == userId && s.Level >= SharingLevels.Level.Read);
 
             var notes = new List<Note>();
             foreach (var share in shares)
             {
-                if (share.Level >= SharingLevels.Level.Read)
-                    notes.Add(await _context.Notes.FindAsync(share.NoteId));
+                notes.Add(await _context.Notes.FindAsync(share.NoteId));
             }
             return notes.ToArray();
         }

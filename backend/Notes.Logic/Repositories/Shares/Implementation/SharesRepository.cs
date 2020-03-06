@@ -18,11 +18,11 @@ namespace Notes.Logic.Repositories.Shares.Implementation
             _context = context;
         }
 
-        public IEnumerable<SharingProps> GetShares(int noteId)
+        public ICollection<SharingProps> GetShares(int noteId)
         {
             return _context.Sharing
                 .Include(i => i.User)
-                .Where(s => s.NoteId == noteId);
+                .Where(s => s.NoteId == noteId).ToArray();
         }
 
         public async Task<SharingProps> GetShare(int noteId, int userId)
@@ -32,12 +32,13 @@ namespace Notes.Logic.Repositories.Shares.Implementation
                 .FirstOrDefaultAsync(n => n.NoteId == noteId && n.UserId == userId);
         }
 
-        public async Task<IEnumerable<SharingProps>> AddShares(IEnumerable<SharingProps> props)
+        public async Task<ICollection<SharingProps>> AddShares(IEnumerable<SharingProps> props)
         {
-            await _context.Sharing.AddRangeAsync(props);
+            var sharingProps = props as SharingProps[] ?? props.ToArray();
+            await _context.Sharing.AddRangeAsync(sharingProps);
             await _context.SaveChangesAsync();
 
-            return props;
+            return sharingProps;
         }
 
         public async Task UpdateShares(IEnumerable<SharingProps> props)

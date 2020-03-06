@@ -9,7 +9,7 @@ namespace Notes.Logic.Services.Shares
 {
     public interface ISharesService
     {
-        public IEnumerable<SharingProps> GetShares(int noteId);
+        public ICollection<SharingProps> GetShares(int noteId);
         public Task AddShares(int noteId, IEnumerable<SharingData> sharedUsersData);
         public Task UpdateShares(int noteId, IEnumerable<SharingData> sharedUsersData);
         public Task DeleteShares(int noteId);

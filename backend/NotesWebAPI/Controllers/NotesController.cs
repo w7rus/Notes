@@ -36,7 +36,7 @@ namespace NotesWebAPI.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<NoteResult>>> NoteList()
+        public async Task<ActionResult<ICollection<NoteResult>>> NoteList()
         {
             try
             {
@@ -65,20 +65,20 @@ namespace NotesWebAPI.Controllers
                 //     }
                 // ));
 
-                return new ActionResult<IEnumerable<NoteResult>>(await Task.WhenAll(notes.Select(async n =>
+                return Ok(notes.Select(n =>
                     new NoteResult
                     {
                         Body = n.Body,
                         Id = n.Id,
                         Title = n.Title,
-                        SharedUsersData = await Task.WhenAll(_sharesService.GetShares(n.Id).Select(async s => new SharingData()
+                        SharedUsersData = _sharesService.GetShares(n.Id).Select(s => new SharingData()
                         {
                             Level = s.Level,
                             UserId = s.UserId,
-                            Username = await _usersService.GetUsernameByUserId(s.UserId)
-                        }))
+                            Username = _usersService.GetUsernameByUserId(s.UserId).Result
+                        }).ToArray()
                     }
-                )));
+                ).ToArray());
             }
             catch (Exception e)
             {
@@ -89,7 +89,7 @@ namespace NotesWebAPI.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("list")]
-        public async Task<ActionResult<IEnumerable<NoteResult>>> NoteListFiltered([Required][FromBody] SearchRequestModel model)
+        public async Task<ActionResult<ICollection<NoteResult>>> NoteListFiltered([Required][FromBody] SearchRequestModel model)
         {
             try
             {
@@ -118,20 +118,20 @@ namespace NotesWebAPI.Controllers
                 //    }
                 //));
 
-                return new ActionResult<IEnumerable<NoteResult>>(await Task.WhenAll(notes.Select(async n =>
+                return Ok(notes.Select(n =>
                     new NoteResult
                     {
                         Body = n.Body,
                         Id = n.Id,
                         Title = n.Title,
-                        SharedUsersData = await Task.WhenAll(_sharesService.GetShares(n.Id).Select(async s => new SharingData()
+                        SharedUsersData = _sharesService.GetShares(n.Id).Select(s => new SharingData()
                         {
                             Level = s.Level,
                             UserId = s.UserId,
-                            Username = await _usersService.GetUsernameByUserId(s.UserId)
-                        }))
+                            Username = _usersService.GetUsernameByUserId(s.UserId).Result
+                        }).ToArray()
                     }
-                )));
+                ).ToArray());
             }
             catch (Exception e)
             {
@@ -175,18 +175,18 @@ namespace NotesWebAPI.Controllers
                 //    })
                 //};
 
-                return new NoteResult
+                return Ok(new NoteResult
                 {
                     Body = note.Body,
                     Id = note.Id,
                     Title = note.Title,
-                    SharedUsersData = await Task.WhenAll(_sharesService.GetShares(note.Id).Select(async s => new SharingData()
+                    SharedUsersData = _sharesService.GetShares(note.Id).Select(s => new SharingData()
                     {
                         Level = s.Level,
                         UserId = s.UserId,
-                        Username = await _usersService.GetUsernameByUserId(s.UserId)
-                    }))
-                };
+                        Username = _usersService.GetUsernameByUserId(s.UserId).Result
+                    }).ToArray()
+                });
             }
             catch (Exception e)
             {
@@ -254,12 +254,12 @@ namespace NotesWebAPI.Controllers
                     Body = note.Body,
                     Id = note.Id,
                     Title = note.Title,
-                    SharedUsersData = await Task.WhenAll(_sharesService.GetShares(note.Id).Select(async s => new SharingData()
+                    SharedUsersData = _sharesService.GetShares(note.Id).Select(s => new SharingData()
                     {
                         Level = s.Level,
                         UserId = s.UserId,
-                        Username = await _usersService.GetUsernameByUserId(s.UserId)
-                    }))
+                        Username = _usersService.GetUsernameByUserId(s.UserId).Result
+                    }).ToArray()
                 });
             }
             catch (Exception e)

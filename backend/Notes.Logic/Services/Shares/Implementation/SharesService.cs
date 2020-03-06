@@ -18,7 +18,7 @@ namespace Notes.Logic.Services.Shares.Implementation
             _sharesRepository = sharesRepository;
         }
 
-        public IEnumerable<SharingProps> GetShares(int noteId)
+        public ICollection<SharingProps> GetShares(int noteId)
         {
             return _sharesRepository.GetShares(noteId);
         }

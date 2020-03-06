@@ -23,30 +23,22 @@ namespace Notes.Logic.Services.Notes.Implementation
         }
 
         #region nonShared
-        public async Task<IEnumerable<Note>> ListNotes(int userId)
+        public async Task<ICollection<Note>> ListNotes(int userId)
         {
             return await _notesRepository.GetNotes(userId);
         }
 
-        public async Task<IEnumerable<Note>> ListNotes(int userId, string search, int sorting, int display, int page)
+        public async Task<ICollection<Note>> ListNotes(int userId, string search, int sorting, int display, int page)
         {
-            var notes = await _notesRepository.GetNotes(userId);
+            IEnumerable<Note> notes = await _notesRepository.GetNotes(userId);
 
             //Sorting
-            switch (sorting)
+            notes = sorting switch
             {
-                default:
-                    notes = notes.OrderBy(n => n.Title);
-                    break;
-
-                case 0:
-                    notes = notes.OrderBy(n => n.Title);
-                    break;
-
-                case 1:
-                    notes = notes.OrderByDescending(n => n.Title);
-                    break;
-            }
+                0 => notes.OrderBy(n => n.Title),
+                1 => notes.OrderByDescending(n => n.Title),
+                _ => notes.OrderBy(n => n.Title),
+            };
 
             //Search
 
@@ -59,7 +51,7 @@ namespace Notes.Logic.Services.Notes.Implementation
 
             notes = notes.Skip(display * (page)).Take(display);
 
-            return notes;
+            return notes.ToArray();
         }
 
         public async Task<Note> GetNote(int noteId)
@@ -120,42 +112,34 @@ namespace Notes.Logic.Services.Notes.Implementation
 
         public async Task<int> GetNoteCount(int userId, string search)
         {
-            var notes = await _notesRepository.GetNotes(userId);
+            IEnumerable<Note> notes = await _notesRepository.GetNotes(userId);
 
             //Search
 
             if (!string.IsNullOrEmpty(search))
                 notes = notes.Where(n => n.Title.Contains(search));
 
-            return notes.Count();
+            return notes.ToArray().Count();
         }
         #endregion
 
         #region Shared
-        public async Task<IEnumerable<Note>> ListSharedNotes(int userId)
+        public async Task<ICollection<Note>> ListSharedNotes(int userId)
         {
             return await _notesRepository.GetSharedNotes(userId);
         }
 
-        public async Task<IEnumerable<Note>> ListSharedNotes(int userId, string search, int sorting, int display, int page)
+        public async Task<ICollection<Note>> ListSharedNotes(int userId, string search, int sorting, int display, int page)
         {
-            var notes = await _notesRepository.GetSharedNotes(userId);
+            IEnumerable<Note> notes = await _notesRepository.GetSharedNotes(userId);
 
             //Sorting
-            switch (sorting)
+            notes = sorting switch
             {
-                default:
-                    notes = notes.OrderBy(n => n.Title);
-                    break;
-
-                case 0:
-                    notes = notes.OrderBy(n => n.Title);
-                    break;
-
-                case 1:
-                    notes = notes.OrderByDescending(n => n.Title);
-                    break;
-            }
+                0 => notes.OrderBy(n => n.Title),
+                1 => notes.OrderByDescending(n => n.Title),
+                _ => notes.OrderBy(n => n.Title),
+            };
 
             //Search
 
@@ -168,7 +152,7 @@ namespace Notes.Logic.Services.Notes.Implementation
 
             notes = notes.Skip(display * (page)).Take(display);
 
-            return notes;
+            return notes.ToArray();
         }
 
         public async Task<Note> GetSharedNote(int noteId)
@@ -206,14 +190,14 @@ namespace Notes.Logic.Services.Notes.Implementation
 
         public async Task<int> GetSharedNoteCount(int userId, string search)
         {
-            var notes = await _notesRepository.GetSharedNotes(userId);
+            IEnumerable<Note> notes = await _notesRepository.GetSharedNotes(userId);
 
             //Search
 
             if (!string.IsNullOrEmpty(search))
                 notes = notes.Where(n => n.Title.Contains(search));
 
-            return notes.Count();
+            return notes.ToArray().Count();
         }
         #endregion
     }
