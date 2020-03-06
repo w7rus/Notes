@@ -9,7 +9,6 @@ namespace Notes.Logic.Common
         public enum Level
         {
             Read,
-            Write,
             ReadWrite,
         }
     }
