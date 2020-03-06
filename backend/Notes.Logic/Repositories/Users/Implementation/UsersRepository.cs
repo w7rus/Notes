@@ -1,4 +1,6 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Notes.Logic.Data;
 using Notes.Logic.Models.Database;
 
@@ -13,20 +15,20 @@ namespace Notes.Logic.Repositories.Users.Implementation
             _context = context;
         }
 
-        public void AddUserWith(string username, string password)
+        public async Task AddUserWith(string username, string password)
         {
-            _context.Users.Add(new User { Username = username, Password = password });
-            _context.SaveChanges();
+            await _context.Users.AddAsync(new User { Username = username, Password = password });
+            await _context.SaveChangesAsync();
         }
 
-        public User FindUserByUserId(int userId)
+        public async Task<User> FindUserByUserId(int userId)
         {
-            return _context.Users.Find(userId);
+            return await _context.Users.FindAsync(userId);
         }
 
-        public User FindUserBy(string username, string password)
+        public async Task<User> FindUserBy(string username, string password)
         {
-            return _context.Users.SingleOrDefault(u => u.Username == username && u.Password == password);
+            return await _context.Users.SingleOrDefaultAsync(u => u.Username == username && u.Password == password);
         }
     }
 }

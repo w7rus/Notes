@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Notes.Logic.Common;
 using Notes.Logic.Models.Database;
 using Notes.Logic.Repositories.Shares;
@@ -22,7 +23,7 @@ namespace Notes.Logic.Services.Shares.Implementation
             return _sharesRepository.GetShares(noteId);
         }
 
-        public void AddShares(int noteId, IEnumerable<SharingData> sharedUsersData)
+        public async Task AddShares(int noteId, IEnumerable<SharingData> sharedUsersData)
         {
             if (sharedUsersData != null)
             {
@@ -38,11 +39,11 @@ namespace Notes.Logic.Services.Shares.Implementation
                     });
                 }
 
-                _sharesRepository.AddShares(sharesToAdd);
+                await _sharesRepository.AddShares(sharesToAdd);
             }
         }
 
-        public void UpdateShares(int noteId, IEnumerable<SharingData> sharedUsersData)
+        public async Task UpdateShares(int noteId, IEnumerable<SharingData> sharedUsersData)
         {
             if (sharedUsersData != null)
             {
@@ -54,7 +55,7 @@ namespace Notes.Logic.Services.Shares.Implementation
 
                 foreach (var sharingData in sharedUsersData)
                 {
-                    var share = _sharesRepository.GetShare(noteId, sharingData.UserId);
+                    var share = await _sharesRepository.GetShare(noteId, sharingData.UserId);
 
                     if (share == null)
                     {
@@ -73,20 +74,20 @@ namespace Notes.Logic.Services.Shares.Implementation
                     }
                 }
 
-                _sharesRepository.AddShares(sharesToAdd);
-                _sharesRepository.UpdateShares(sharesToUpdate);
-                _sharesRepository.DeleteShares(shares);
+                await _sharesRepository.AddShares(sharesToAdd);
+                await _sharesRepository.UpdateShares(sharesToUpdate);
+                await _sharesRepository.DeleteShares(shares);
             }
         }
 
-        public void DeleteShares(int noteId)
+        public async Task DeleteShares(int noteId)
         {
             var shares = _sharesRepository.GetShares(noteId);
 
             if (shares == null)
                 return;
 
-            _sharesRepository.DeleteShares(shares);
+            await _sharesRepository.DeleteShares(shares);
         }
     }
 }

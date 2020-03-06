@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Notes.Logic.Common;
 using Notes.Logic.Data;
 using Notes.Logic.Models.Database;
@@ -16,39 +18,41 @@ namespace Notes.Logic.Repositories.Notes.Implementation
         }
 
         #region nonShared
-        public IEnumerable<Note> GetNotes(int userId)
+        public async Task<IEnumerable<Note>> GetNotes(int userId)
         {
-            return _context.Notes.Where(n => n.UserId == userId).ToList();
+            return await _context.Notes
+                //.Include(n => n.User)
+                .Where(n => n.UserId == userId).ToListAsync();
         }
 
-        public Note GetNote(int noteId)
+        public async Task<Note> GetNote(int noteId)
         {
-            return _context.Notes.Find(noteId);
+            return await _context.Notes.FindAsync(noteId);
         }
 
-        public Note AddNote(Note note)
+        public async Task<Note> AddNote(Note note)
         {
-            _context.Notes.Add(note);
-            _context.SaveChanges();
+            await _context.Notes.AddAsync(note);
+            await _context.SaveChangesAsync();
 
             return note;
         }
 
-        public void UpdateNote(Note note)
+        public async Task UpdateNote(Note note)
         {
             _context.Notes.Update(note);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void DeleteNote(Note note)
+        public async Task DeleteNote(Note note)
         {
             _context.Notes.Remove(note);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
         #endregion
 
         #region Shared
-        public IEnumerable<Note> GetSharedNotes(int userId)
+        public async Task<IEnumerable<Note>> GetSharedNotes(int userId)
         {
             var shares = _context.Sharing.Where(s => s.UserId == userId);
 
@@ -56,20 +60,20 @@ namespace Notes.Logic.Repositories.Notes.Implementation
             foreach (var share in shares)
             {
                 if (share.Level >= SharingLevels.Level.Read)
-                    notes.Add(_context.Notes.Find(share.NoteId));
+                    notes.Add(await _context.Notes.FindAsync(share.NoteId));
             }
             return notes.ToArray();
         }
 
-        public Note GetSharedNote(int noteId)
+        public async Task<Note> GetSharedNote(int noteId)
         {
-            return _context.Notes.Find(noteId);
+            return await _context.Notes.FindAsync(noteId);
         }
 
-        public void UpdateSharedNote(Note note)
+        public async Task UpdateSharedNote(Note note)
         {
             _context.Notes.Update(note);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
         #endregion
     }

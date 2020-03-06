@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Notes.Logic.Models;
@@ -23,12 +24,12 @@ namespace NotesWebAPI.Controllers
         // Send JWT token on successful login data
         [HttpPost, Route("login")]
         [AllowAnonymous]
-        public ActionResult<LoginResult> Login([Required][FromBody] LoginRequestModel model)
+        public async Task<ActionResult<LoginResult>> Login([Required][FromBody] LoginRequestModel model)
         {
             try
             {
                 Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Logging in @{model.Username}");
-                var user = _usersService.LoginUser(model.Username, model.Password);
+                var user = await _usersService.LoginUser(model.Username, model.Password);
                 Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Successfully logged in @{user.Username}[{user.UserID}]");
                 return Ok(user);
             }
@@ -42,12 +43,12 @@ namespace NotesWebAPI.Controllers
         // Add new user to the database
         [HttpPost, Route("register")]
         [AllowAnonymous]
-        public IActionResult Register([Required][FromBody] RegisterRequestModel model)
+        public async Task<IActionResult> Register([Required][FromBody] RegisterRequestModel model)
         {
             try
             {
                 Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Signing up @{model.Username}");
-                _usersService.RegisterUser(model.Username, model.Password, model.PasswordRepeat);
+                await _usersService.RegisterUser(model.Username, model.Password, model.PasswordRepeat);
                 Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Successfully registered @{model.Username}");
                 return Ok();
             }

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Notes.Logic.Data;
 using Notes.Logic.Models.Database;
 
@@ -21,29 +23,29 @@ namespace Notes.Logic.Repositories.Shares.Implementation
             return _context.Sharing.Where(s => s.NoteId == noteId);
         }
 
-        public SharingProps GetShare(int noteId, int userId)
+        public async Task<SharingProps> GetShare(int noteId, int userId)
         {
-            return _context.Sharing.FirstOrDefault(n => n.NoteId == noteId && n.UserId == userId);
+            return await _context.Sharing.FirstOrDefaultAsync(n => n.NoteId == noteId && n.UserId == userId);
         }
 
-        public IEnumerable<SharingProps> AddShares(IEnumerable<SharingProps> props)
+        public async Task<IEnumerable<SharingProps>> AddShares(IEnumerable<SharingProps> props)
         {
-            _context.Sharing.AddRange(props);
-            _context.SaveChanges();
+            await _context.Sharing.AddRangeAsync(props);
+            await _context.SaveChangesAsync();
 
             return props;
         }
 
-        public void UpdateShares(IEnumerable<SharingProps> props)
+        public async Task UpdateShares(IEnumerable<SharingProps> props)
         {
             _context.Sharing.UpdateRange(props);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void DeleteShares(IEnumerable<SharingProps> props)
+        public async Task DeleteShares(IEnumerable<SharingProps> props)
         {
             _context.Sharing.RemoveRange(props);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }

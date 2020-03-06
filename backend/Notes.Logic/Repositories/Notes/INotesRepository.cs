@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Notes.Logic.Models.Database;
 
 namespace Notes.Logic.Repositories.Notes
@@ -6,17 +7,17 @@ namespace Notes.Logic.Repositories.Notes
     public interface INotesRepository
     {
         #region notShared
-        public IEnumerable<Note> GetNotes(int userId);
-        public Note GetNote(int noteId);
-        public Note AddNote(Note note);
-        public void UpdateNote(Note note);
-        public void DeleteNote(Note note);
+        public Task<IEnumerable<Note>> GetNotes(int userId);
+        public Task<Note> GetNote(int noteId);
+        public Task<Note> AddNote(Note note);
+        public Task UpdateNote(Note note);
+        public Task DeleteNote(Note note);
         #endregion
 
         #region Shared
-        public IEnumerable<Note> GetSharedNotes(int userId);
-        public Note GetSharedNote(int noteId);
-        public void UpdateSharedNote(Note note);
+        public Task<IEnumerable<Note>> GetSharedNotes(int userId);
+        public Task<Note> GetSharedNote(int noteId);
+        public Task UpdateSharedNote(Note note);
         #endregion
     }
 }

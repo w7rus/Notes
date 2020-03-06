@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Notes.Logic.Common;
 using Notes.Logic.Models.Database;
 using Notes.Logic.Repositories.Notes;
@@ -22,14 +23,14 @@ namespace Notes.Logic.Services.Notes.Implementation
         }
 
         #region nonShared
-        public IEnumerable<Note> ListNotes(int userId)
+        public async Task<IEnumerable<Note>> ListNotes(int userId)
         {
-            return _notesRepository.GetNotes(userId);
+            return await _notesRepository.GetNotes(userId);
         }
 
-        public IEnumerable<Note> ListNotes(int userId, string search, int sorting, int display, int page)
+        public async Task<IEnumerable<Note>> ListNotes(int userId, string search, int sorting, int display, int page)
         {
-            var notes = _notesRepository.GetNotes(userId);
+            var notes = await _notesRepository.GetNotes(userId);
 
             //Sorting
             switch (sorting)
@@ -61,12 +62,12 @@ namespace Notes.Logic.Services.Notes.Implementation
             return notes;
         }
 
-        public Note GetNote(int noteId)
+        public async Task<Note> GetNote(int noteId)
         {
-            return _notesRepository.GetNote(noteId);
+            return await _notesRepository.GetNote(noteId);
         }
 
-        public Note AddNote(string title, string body, int userId, IEnumerable<SharingData> sharingUsersData)
+        public async Task<Note> AddNote(string title, string body, int userId, IEnumerable<SharingData> sharingUsersData)
         {
             var note = new Note
             {
@@ -75,15 +76,15 @@ namespace Notes.Logic.Services.Notes.Implementation
                 Body = body
             };
 
-            var addedNote = _notesRepository.AddNote(note);
-            _sharesService.AddShares(addedNote.Id, sharingUsersData);
+            var addedNote = await _notesRepository.AddNote(note);
+            await _sharesService.AddShares(addedNote.Id, sharingUsersData);
 
             return note;
         }
 
-        public void UpdateNote(int noteId, string title, string body, int userId, IEnumerable<SharingData> sharingUsersData)
+        public async Task UpdateNote(int noteId, string title, string body, int userId, IEnumerable<SharingData> sharingUsersData)
         {
-            var note = _notesRepository.GetNote(noteId);
+            var note = await _notesRepository.GetNote(noteId);
 
             if (note == null)
                 throw new ArgumentException($"Note[{noteId}] does not exists!");
@@ -94,13 +95,13 @@ namespace Notes.Logic.Services.Notes.Implementation
             note.Title = title;
             note.Body = body;
 
-            _notesRepository.UpdateNote(note);
-            _sharesService.UpdateShares(noteId, sharingUsersData);
+            await _notesRepository.UpdateNote(note);
+            await _sharesService.UpdateShares(noteId, sharingUsersData);
         }
 
-        public void DeleteNote(int noteId, int userId)
+        public async Task DeleteNote(int noteId, int userId)
         {
-            var note = _notesRepository.GetNote(noteId);
+            var note = await _notesRepository.GetNote(noteId);
 
             if (note == null)
                 throw new ArgumentException($"Note[{noteId}] does not exists!");
@@ -108,18 +109,18 @@ namespace Notes.Logic.Services.Notes.Implementation
             if (note.UserId != userId)
                 throw new InvalidOperationException($"User[{userId}] does not have permissions to operate with note[{note.UserId}]");
 
-            _sharesService.DeleteShares(noteId);
-            _notesRepository.DeleteNote(note);
+            await _sharesService.DeleteShares(noteId);
+            await _notesRepository.DeleteNote(note);
         }
 
-        public int GetNoteCount(int userId)
+        public async Task<int> GetNoteCount(int userId)
         {
-            return _notesRepository.GetNotes(userId).Count();
+            return (await _notesRepository.GetNotes(userId)).Count();
         }
 
-        public int GetNoteCount(int userId, string search)
+        public async Task<int> GetNoteCount(int userId, string search)
         {
-            var notes = _notesRepository.GetNotes(userId);
+            var notes = await _notesRepository.GetNotes(userId);
 
             //Search
 
@@ -131,14 +132,14 @@ namespace Notes.Logic.Services.Notes.Implementation
         #endregion
 
         #region Shared
-        public IEnumerable<Note> ListSharedNotes(int userId)
+        public async Task<IEnumerable<Note>> ListSharedNotes(int userId)
         {
-            return _notesRepository.GetSharedNotes(userId);
+            return await _notesRepository.GetSharedNotes(userId);
         }
 
-        public IEnumerable<Note> ListSharedNotes(int userId, string search, int sorting, int display, int page)
+        public async Task<IEnumerable<Note>> ListSharedNotes(int userId, string search, int sorting, int display, int page)
         {
-            var notes = _notesRepository.GetSharedNotes(userId);
+            var notes = await _notesRepository.GetSharedNotes(userId);
 
             //Sorting
             switch (sorting)
@@ -170,14 +171,14 @@ namespace Notes.Logic.Services.Notes.Implementation
             return notes;
         }
 
-        public Note GetSharedNote(int noteId)
+        public async Task<Note> GetSharedNote(int noteId)
         {
-            return _notesRepository.GetSharedNote(noteId);
+            return await _notesRepository.GetSharedNote(noteId);
         }
 
-        public void UpdateSharedNote(int noteId, string title, string body, int userId, IEnumerable<SharingData> sharingUsersData)
+        public async Task UpdateSharedNote(int noteId, string title, string body, int userId, IEnumerable<SharingData> sharingUsersData)
         {
-            var note = _notesRepository.GetSharedNote(noteId);
+            var note = await _notesRepository.GetSharedNote(noteId);
 
             if (note == null)
                 throw new ArgumentException($"Note[{noteId}] does not exists!");
@@ -195,17 +196,17 @@ namespace Notes.Logic.Services.Notes.Implementation
             note.Title = title;
             note.Body = body;
 
-            _notesRepository.UpdateSharedNote(note);
+            await _notesRepository.UpdateSharedNote(note);
         }
 
-        public int GetSharedNoteCount(int userId)
+        public async Task<int> GetSharedNoteCount(int userId)
         {
-            return _notesRepository.GetSharedNotes(userId).Count();
+            return (await _notesRepository.GetSharedNotes(userId)).Count();
         }
 
-        public int GetSharedNoteCount(int userId, string search)
+        public async Task<int> GetSharedNoteCount(int userId, string search)
         {
-            var notes = _notesRepository.GetSharedNotes(userId);
+            var notes = await _notesRepository.GetSharedNotes(userId);
 
             //Search
 

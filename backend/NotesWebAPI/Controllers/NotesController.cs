@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -35,7 +36,7 @@ namespace NotesWebAPI.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet]
-        public ActionResult<IEnumerable<NoteResult>> NoteList()
+        public async Task<ActionResult<IEnumerable<NoteResult>>> NoteList()
         {
             try
             {
@@ -45,7 +46,7 @@ namespace NotesWebAPI.Controllers
                     return Unauthorized();
                 }
 
-                var notes = _notesService.ListNotes(userId);
+                var notes = (await _notesService.ListNotes(userId)).ToList();
 
                 Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Sending {notes.Count()} notes[{string.Join(", ", notes.Select(n => n.Id))}] to user[{userId}]");
 
@@ -55,12 +56,12 @@ namespace NotesWebAPI.Controllers
                         Body = n.Body,
                         Id = n.Id,
                         Title = n.Title,
-                        SharedUsersData = new List<SharingData>(_sharesService.GetShares(n.Id).Select(s => new SharingData()
+                        SharedUsersData = _sharesService.GetShares(n.Id).Select(s => new SharingData()
                         {
                             Level = s.Level,
                             UserId = s.UserId,
-                            Username = _usersService.GetUsernameByUserId(s.UserId)
-                        })).ToArray()
+                            Username = s.User.Username//_usersService.GetUsernameByUserId(s.UserId)
+                        }).ToList()
                     }
                 ));
             }
@@ -73,7 +74,7 @@ namespace NotesWebAPI.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("list")]
-        public ActionResult<IEnumerable<NoteResult>> NoteListFiltered([Required][FromBody] SearchRequestModel model)
+        public async Task<ActionResult<IEnumerable<NoteResult>>> NoteListFiltered([Required][FromBody] SearchRequestModel model)
         {
             try
             {
@@ -83,7 +84,7 @@ namespace NotesWebAPI.Controllers
                     return Unauthorized();
                 }
 
-                var notes = _notesService.ListNotes(userId, model.Search, model.Sorting, model.Display, model.Page);
+                var notes = (await _notesService.ListNotes(userId, model.Search, model.Sorting, model.Display, model.Page)).ToList();
 
                 Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Sending {notes.Count()} notes[{string.Join(", ", notes.Select(n => n.Id))}] filters:[\"{model.Search}\", {model.Sorting}, {model.Display}, {model.Page}] to user[{userId}]");
 
@@ -97,7 +98,7 @@ namespace NotesWebAPI.Controllers
                         {
                             Level = s.Level,
                             UserId = s.UserId,
-                            Username = _usersService.GetUsernameByUserId(s.UserId)
+                            Username = s.User.Username//_usersService.GetUsernameByUserId(s.UserId)
                         })).ToArray()
                     }
                 ));
@@ -111,7 +112,7 @@ namespace NotesWebAPI.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{noteId}")]
-        public ActionResult<NoteResult> GetNote([Required] int noteId)
+        public async Task<ActionResult<NoteResult>> GetNote([Required] int noteId)
         {
             try
             {
@@ -121,7 +122,7 @@ namespace NotesWebAPI.Controllers
                     return Unauthorized();
                 }
 
-                var note = _notesService.GetNote(noteId);
+                var note = await _notesService.GetNote(noteId);
 
                 if (note.UserId != userId)
                 {
@@ -140,7 +141,7 @@ namespace NotesWebAPI.Controllers
                     {
                         Level = s.Level,
                         UserId = s.UserId,
-                        Username = _usersService.GetUsernameByUserId(s.UserId)
+                        Username = s.User.Username//_usersService.GetUsernameByUserId(s.UserId)
                     })).ToArray()
                 };
             }
@@ -153,7 +154,7 @@ namespace NotesWebAPI.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPut("{noteId}")]
-        public IActionResult UpdateNote([Required] int noteId, [Required][FromBody] NoteRequestModel model)
+        public async Task<IActionResult> UpdateNote([Required] int noteId, [Required][FromBody] NoteRequestModel model)
         {
             try
             {
@@ -163,7 +164,7 @@ namespace NotesWebAPI.Controllers
                     return Unauthorized();
                 }
 
-                _notesService.UpdateNote(noteId, model.Title, model.Body, userId, model.SharedUsersData);
+                await _notesService.UpdateNote(noteId, model.Title, model.Body, userId, model.SharedUsersData);
 
                 Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Successfully updated note[{noteId}] of user[{userId}]");
 
@@ -178,7 +179,7 @@ namespace NotesWebAPI.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
-        public ActionResult<NoteResult> AddNote([Required][FromBody] NoteRequestModel model)
+        public async Task<ActionResult<NoteResult>> AddNote([Required][FromBody] NoteRequestModel model)
         {
             try
             {
@@ -188,7 +189,7 @@ namespace NotesWebAPI.Controllers
                     return Unauthorized();
                 }
 
-                var note = _notesService.AddNote(model.Title, model.Body, userId, model.SharedUsersData);
+                var note = await _notesService.AddNote(model.Title, model.Body, userId, model.SharedUsersData);
 
                 Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Successfully added note[{note.Id}] of user[{userId}]");
 
@@ -201,7 +202,7 @@ namespace NotesWebAPI.Controllers
                     {
                         Level = s.Level,
                         UserId = s.UserId,
-                        Username = _usersService.GetUsernameByUserId(s.UserId)
+                        Username = s.User.Username//_usersService.GetUsernameByUserId(s.UserId)
                     })).ToArray()
                 });
             }
@@ -214,7 +215,7 @@ namespace NotesWebAPI.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpDelete("{noteId}")]
-        public IActionResult DeleteNote([Required] int noteId)
+        public async Task<IActionResult> DeleteNote([Required] int noteId)
         {
             try
             {
@@ -224,7 +225,7 @@ namespace NotesWebAPI.Controllers
                     return Unauthorized();
                 }
 
-                _notesService.DeleteNote(noteId, userId);
+                await _notesService.DeleteNote(noteId, userId);
 
                 Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Successfully deleted note[{noteId}] of user[{userId}]");
 
@@ -239,7 +240,7 @@ namespace NotesWebAPI.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("count")]
-        public IActionResult NoteCount()
+        public async Task<IActionResult> NoteCount()
         {
             try
             {
@@ -249,7 +250,7 @@ namespace NotesWebAPI.Controllers
                     return Unauthorized();
                 }
 
-                var count = _notesService.GetNoteCount(userId);
+                var count = await _notesService.GetNoteCount(userId);
 
                 Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Sending int[{count}] to user[{userId}]");
 
@@ -264,7 +265,7 @@ namespace NotesWebAPI.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("countFiltered")]
-        public IActionResult NoteCountFiltered([Required][FromBody] SearchRequestModel model)
+        public async Task<IActionResult> NoteCountFiltered([Required][FromBody] SearchRequestModel model)
         {
             try
             {
@@ -274,7 +275,7 @@ namespace NotesWebAPI.Controllers
                     return Unauthorized();
                 }
 
-                var count = _notesService.GetNoteCount(userId, model.Search);
+                var count = await _notesService.GetNoteCount(userId, model.Search);
 
                 Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Sending int[{count}] filters:[\"{model.Search}\"] to user[{userId}]");
 

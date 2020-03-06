@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Notes.Logic.Models;
@@ -21,9 +22,9 @@ namespace Notes.Logic.Services.Users.Implementation
             _configuration = configuration;
         }
 
-        public LoginResult LoginUser(string username, string password)
+        public async Task<LoginResult> LoginUser(string username, string password)
         {
-            var user = _usersRepository.FindUserBy(username, password);
+            var user = await _usersRepository.FindUserBy(username, password);
 
             if (user == null)
                 throw new ArgumentException("Invalid login data!");
@@ -51,17 +52,17 @@ namespace Notes.Logic.Services.Users.Implementation
             };
         }
 
-        public void RegisterUser(string username, string password, string passwordRepeat)
+        public async Task RegisterUser(string username, string password, string passwordRepeat)
         {
             if (password != passwordRepeat)
                 throw new InvalidOperationException("Repeated password does not match!");
 
-            _usersRepository.AddUserWith(username, password);
+            await _usersRepository.AddUserWith(username, password);
         }
 
-        public string GetUsernameByUserId(int userId)
+        public async Task<string> GetUsernameByUserId(int userId)
         {
-            var user =_usersRepository.FindUserByUserId(userId);
+            var user = await _usersRepository.FindUserByUserId(userId);
 
             if (user == null)
                 throw new InvalidOperationException("Specified user is not found!");

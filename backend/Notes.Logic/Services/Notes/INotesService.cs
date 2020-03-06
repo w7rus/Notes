@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Notes.Logic.Models.Database;
 using NotesWebAPI.Models.View.Request;
 
@@ -7,23 +8,23 @@ namespace Notes.Logic.Services.Notes
     public interface INotesService
     {
         #region notShared
-        public IEnumerable<Note> ListNotes(int userId);
-        public IEnumerable<Note> ListNotes(int userId, string search, int sorting, int display, int page);
-        public Note GetNote(int noteId);
-        public Note AddNote(string title, string body, int userId, IEnumerable<SharingData> sharingUsersData);
-        public void UpdateNote(int noteId, string title, string body, int userId, IEnumerable<SharingData> sharingUsersData);
-        public void DeleteNote(int noteId, int userId);
-        public int GetNoteCount(int userId);
-        public int GetNoteCount(int userId, string search);
+        public Task<IEnumerable<Note>> ListNotes(int userId);
+        public Task<IEnumerable<Note>> ListNotes(int userId, string search, int sorting, int display, int page);
+        public Task<Note> GetNote(int noteId);
+        public Task<Note> AddNote(string title, string body, int userId, IEnumerable<SharingData> sharingUsersData);
+        public Task UpdateNote(int noteId, string title, string body, int userId, IEnumerable<SharingData> sharingUsersData);
+        public Task DeleteNote(int noteId, int userId);
+        public Task<int> GetNoteCount(int userId);
+        public Task<int> GetNoteCount(int userId, string search);
         #endregion
 
         #region Shared
-        public IEnumerable<Note> ListSharedNotes(int userId);
-        public IEnumerable<Note> ListSharedNotes(int userId, string search, int sorting, int display, int page);
-        public Note GetSharedNote(int noteId);
-        public void UpdateSharedNote(int noteId, string title, string body, int userId, IEnumerable<SharingData> sharingUsersData);
-        public int GetSharedNoteCount(int userId);
-        public int GetSharedNoteCount(int userId, string search);
+        public Task<IEnumerable<Note>> ListSharedNotes(int userId);
+        public Task<IEnumerable<Note>> ListSharedNotes(int userId, string search, int sorting, int display, int page);
+        public Task<Note> GetSharedNote(int noteId);
+        public Task UpdateSharedNote(int noteId, string title, string body, int userId, IEnumerable<SharingData> sharingUsersData);
+        public Task<int> GetSharedNoteCount(int userId);
+        public Task<int> GetSharedNoteCount(int userId, string search);
         #endregion
     }
 }
