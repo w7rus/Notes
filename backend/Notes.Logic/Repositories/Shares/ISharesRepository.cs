@@ -9,8 +9,8 @@ namespace Notes.Logic.Repositories.Shares
     {
         public IEnumerable<SharingProps> GetShares(int noteId);
         public SharingProps GetShare(int noteId, int userId);
-        public SharingProps AddShare(SharingProps props);
-        public void UpdateShare(SharingProps props);
-        public void DeleteShare(SharingProps props);
+        public IEnumerable<SharingProps> AddShares(IEnumerable<SharingProps> props);
+        public void UpdateShares(IEnumerable<SharingProps> props);
+        public void DeleteShares(IEnumerable<SharingProps> props);
     }
 }

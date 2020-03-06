@@ -26,23 +26,23 @@ namespace Notes.Logic.Repositories.Shares.Implementation
             return _context.Sharing.FirstOrDefault(n => n.NoteId == noteId && n.UserId == userId);
         }
 
-        public SharingProps AddShare(SharingProps props)
+        public IEnumerable<SharingProps> AddShares(IEnumerable<SharingProps> props)
         {
-            _context.Sharing.Add(props);
+            _context.Sharing.AddRange(props);
             _context.SaveChanges();
 
             return props;
         }
 
-        public void UpdateShare(SharingProps props)
+        public void UpdateShares(IEnumerable<SharingProps> props)
         {
-            _context.Sharing.Update(props);
+            _context.Sharing.UpdateRange(props);
             _context.SaveChanges();
         }
 
-        public void DeleteShare(SharingProps props)
+        public void DeleteShares(IEnumerable<SharingProps> props)
         {
-            _context.Sharing.Remove(props);
+            _context.Sharing.RemoveRange(props);
             _context.SaveChanges();
         }
     }

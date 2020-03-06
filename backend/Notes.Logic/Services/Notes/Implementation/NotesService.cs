@@ -108,8 +108,8 @@ namespace Notes.Logic.Services.Notes.Implementation
             if (note.UserId != userId)
                 throw new InvalidOperationException($"User[{userId}] does not have permissions to operate with note[{note.UserId}]");
 
-            _notesRepository.DeleteNote(note);
             _sharesService.DeleteShares(noteId);
+            _notesRepository.DeleteNote(note);
         }
 
         public int GetNoteCount(int userId)

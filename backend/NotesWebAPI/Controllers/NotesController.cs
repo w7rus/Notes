@@ -110,7 +110,7 @@ namespace NotesWebAPI.Controllers
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpGet("{id}")]
+        [HttpGet("{noteId}")]
         public ActionResult<NoteResult> GetNote([Required] int noteId)
         {
             try
@@ -152,7 +152,7 @@ namespace NotesWebAPI.Controllers
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpPut("{id}")]
+        [HttpPut("{noteId}")]
         public IActionResult UpdateNote([Required] int noteId, [Required][FromBody] NoteRequestModel model)
         {
             try
@@ -213,7 +213,7 @@ namespace NotesWebAPI.Controllers
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpDelete("{id}")]
+        [HttpDelete("{noteId}")]
         public IActionResult DeleteNote([Required] int noteId)
         {
             try

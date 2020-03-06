@@ -33,6 +33,16 @@
     <Compile Remove="Migrations\20200305093005_SharingProperties.Designer.cs" />
     <Compile Remove="Migrations\20200305094309_SharingPropertiesOnDelete.cs" />
     <Compile Remove="Migrations\20200305094309_SharingPropertiesOnDelete.Designer.cs" />
+    <Compile Remove="Migrations\20200306085343_ChangeDeleteBehavior.cs" />
+    <Compile Remove="Migrations\20200306085343_ChangeDeleteBehavior.Designer.cs" />
+    <Compile Remove="Migrations\20200306085700_ChangeDeleteBehavior.cs" />
+    <Compile Remove="Migrations\20200306085700_ChangeDeleteBehavior.Designer.cs" />
+    <Compile Remove="Migrations\20200306085821_ChangeDeleteBehavior.cs" />
+    <Compile Remove="Migrations\20200306085821_ChangeDeleteBehavior.Designer.cs" />
+    <Compile Remove="Migrations\20200306090030_ChangeDeleteBehavior.cs" />
+    <Compile Remove="Migrations\20200306090030_ChangeDeleteBehavior.Designer.cs" />
+    <Compile Remove="Migrations\20200306090330_ChangeDeleteBehavior.cs" />
+    <Compile Remove="Migrations\20200306090330_ChangeDeleteBehavior.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
