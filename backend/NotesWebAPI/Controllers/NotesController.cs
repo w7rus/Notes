@@ -50,20 +50,35 @@ namespace NotesWebAPI.Controllers
 
                 Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Sending {notes.Count()} notes[{string.Join(", ", notes.Select(n => n.Id))}] to user[{userId}]");
 
-                return new ActionResult<IEnumerable<NoteResult>>(notes.Select(n =>
+                // return new ActionResult<IEnumerable<NoteResult>>(notes.Select(n =>
+                //     new NoteResult
+                //     {
+                //         Body = n.Body,
+                //         Id = n.Id,
+                //         Title = n.Title,
+                //         SharedUsersData = _sharesService.GetShares(n.Id).Select(s => new SharingData()
+                //         {
+                //             Level = s.Level,
+                //             UserId = s.UserId,
+                //             Username = s.User.Username//_usersService.GetUsernameByUserId(s.UserId)
+                //         })
+                //     }
+                // ));
+
+                return new ActionResult<IEnumerable<NoteResult>>(await Task.WhenAll(notes.Select(async n =>
                     new NoteResult
                     {
                         Body = n.Body,
                         Id = n.Id,
                         Title = n.Title,
-                        SharedUsersData = _sharesService.GetShares(n.Id).Select(s => new SharingData()
+                        SharedUsersData = await Task.WhenAll(_sharesService.GetShares(n.Id).Select(async s => new SharingData()
                         {
                             Level = s.Level,
                             UserId = s.UserId,
-                            Username = s.User.Username//_usersService.GetUsernameByUserId(s.UserId)
-                        })
+                            Username = await _usersService.GetUsernameByUserId(s.UserId)
+                        }))
                     }
-                ));
+                )));
             }
             catch (Exception e)
             {
@@ -88,20 +103,35 @@ namespace NotesWebAPI.Controllers
 
                 Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Sending {notes.Count()} notes[{string.Join(", ", notes.Select(n => n.Id))}] filters:[\"{model.Search}\", {model.Sorting}, {model.Display}, {model.Page}] to user[{userId}]");
 
-                return new ActionResult<IEnumerable<NoteResult>>(notes.Select(n =>
+                //return new ActionResult<IEnumerable<NoteResult>>(notes.Select(n =>
+                //    new NoteResult
+                //    {
+                //        Body = n.Body,
+                //        Id = n.Id,
+                //        Title = n.Title,
+                //        SharedUsersData = _sharesService.GetShares(n.Id).Select(s => new SharingData()
+                //        {
+                //            Level = s.Level,
+                //            UserId = s.UserId,
+                //            Username = s.User.Username//_usersService.GetUsernameByUserId(s.UserId)
+                //        })
+                //    }
+                //));
+
+                return new ActionResult<IEnumerable<NoteResult>>(await Task.WhenAll(notes.Select(async n =>
                     new NoteResult
                     {
                         Body = n.Body,
                         Id = n.Id,
                         Title = n.Title,
-                        SharedUsersData = _sharesService.GetShares(n.Id).Select(s => new SharingData()
+                        SharedUsersData = await Task.WhenAll(_sharesService.GetShares(n.Id).Select(async s => new SharingData()
                         {
                             Level = s.Level,
                             UserId = s.UserId,
-                            Username = s.User.Username//_usersService.GetUsernameByUserId(s.UserId)
-                        })
+                            Username = await _usersService.GetUsernameByUserId(s.UserId)
+                        }))
                     }
-                ));
+                )));
             }
             catch (Exception e)
             {
@@ -132,17 +162,30 @@ namespace NotesWebAPI.Controllers
 
                 Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Sending note[{note.Id}] to user[{userId}]");
 
+                //return new NoteResult
+                //{
+                //    Body = note.Body,
+                //    Id = note.Id,
+                //    Title = note.Title,
+                //    SharedUsersData = _sharesService.GetShares(note.Id).Select(s => new SharingData()
+                //    {
+                //        Level = s.Level,
+                //        UserId = s.UserId,
+                //        Username = s.User.Username//_usersService.GetUsernameByUserId(s.UserId)
+                //    })
+                //};
+
                 return new NoteResult
                 {
                     Body = note.Body,
                     Id = note.Id,
                     Title = note.Title,
-                    SharedUsersData = _sharesService.GetShares(note.Id).Select(s => new SharingData()
+                    SharedUsersData = await Task.WhenAll(_sharesService.GetShares(note.Id).Select(async s => new SharingData()
                     {
                         Level = s.Level,
                         UserId = s.UserId,
-                        Username = s.User.Username//_usersService.GetUsernameByUserId(s.UserId)
-                    })
+                        Username = await _usersService.GetUsernameByUserId(s.UserId)
+                    }))
                 };
             }
             catch (Exception e)
@@ -193,17 +236,30 @@ namespace NotesWebAPI.Controllers
 
                 Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Successfully added note[{note.Id}] of user[{userId}]");
 
+                //return Ok(new NoteResult
+                //{
+                //    Body = note.Body,
+                //    Id = note.Id,
+                //    Title = note.Title,
+                //    SharedUsersData = _sharesService.GetShares(note.Id).Select(s => new SharingData()
+                //    {
+                //        Level = s.Level,
+                //        UserId = s.UserId,
+                //        Username = s.User.Username//_usersService.GetUsernameByUserId(s.UserId)
+                //    })
+                //});
+
                 return Ok(new NoteResult
                 {
                     Body = note.Body,
                     Id = note.Id,
                     Title = note.Title,
-                    SharedUsersData = _sharesService.GetShares(note.Id).Select(s => new SharingData()
+                    SharedUsersData = await Task.WhenAll(_sharesService.GetShares(note.Id).Select(async s => new SharingData()
                     {
                         Level = s.Level,
                         UserId = s.UserId,
-                        Username = s.User.Username//_usersService.GetUsernameByUserId(s.UserId)
-                    })
+                        Username = await _usersService.GetUsernameByUserId(s.UserId)
+                    }))
                 });
             }
             catch (Exception e)
