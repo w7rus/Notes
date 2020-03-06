@@ -113,7 +113,7 @@ namespace NotesWebAPI.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{id}")]
-        public ActionResult<NoteResult> GetSharedNote([Required] int id)
+        public ActionResult<NoteResult> GetSharedNote([Required] int noteId)
         {
             try
             {
@@ -123,9 +123,9 @@ namespace NotesWebAPI.Controllers
                     return Unauthorized();
                 }
 
-                var note = _notesService.GetSharedNote(id);
+                var note = _notesService.GetSharedNote(noteId);
 
-                var sharedUsersData = _sharesService.GetShares(id);
+                var sharedUsersData = _sharesService.GetShares(noteId);
 
                 var sharedUserData = sharedUsersData.FirstOrDefault(s => s.UserId == userId);
 
@@ -165,7 +165,7 @@ namespace NotesWebAPI.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPut("{id}")]
-        public IActionResult UpdateSharedNote([Required] int id, [Required] [FromBody] NoteRequestModel model)
+        public IActionResult UpdateSharedNote([Required] int noteId, [Required][FromBody] NoteRequestModel model)
         {
             try
             {
@@ -175,9 +175,9 @@ namespace NotesWebAPI.Controllers
                     return Unauthorized();
                 }
 
-                _notesService.UpdateSharedNote(id, model.Title, model.Body, userId, model.SharedUsersData);
+                _notesService.UpdateSharedNote(noteId, model.Title, model.Body, userId, model.SharedUsersData);
 
-                Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Successfully updated shared note[{id}] of user[{userId}]");
+                Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Successfully updated shared note[{noteId}] of user[{userId}]");
 
                 return Ok();
             }

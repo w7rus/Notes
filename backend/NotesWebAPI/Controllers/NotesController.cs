@@ -111,7 +111,7 @@ namespace NotesWebAPI.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{id}")]
-        public ActionResult<NoteResult> GetNote([Required] int id)
+        public ActionResult<NoteResult> GetNote([Required] int noteId)
         {
             try
             {
@@ -121,7 +121,7 @@ namespace NotesWebAPI.Controllers
                     return Unauthorized();
                 }
 
-                var note = _notesService.GetNote(id);
+                var note = _notesService.GetNote(noteId);
 
                 if (note.UserId != userId)
                 {
@@ -153,7 +153,7 @@ namespace NotesWebAPI.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPut("{id}")]
-        public IActionResult UpdateNote([Required] int id, [Required][FromBody] NoteRequestModel model)
+        public IActionResult UpdateNote([Required] int noteId, [Required][FromBody] NoteRequestModel model)
         {
             try
             {
@@ -163,9 +163,9 @@ namespace NotesWebAPI.Controllers
                     return Unauthorized();
                 }
 
-                _notesService.UpdateNote(id, model.Title, model.Body, userId, model.SharedUsersData);
+                _notesService.UpdateNote(noteId, model.Title, model.Body, userId, model.SharedUsersData);
 
-                Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Successfully updated note[{id}] of user[{userId}]");
+                Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Successfully updated note[{noteId}] of user[{userId}]");
 
                 return Ok();
             }
@@ -214,7 +214,7 @@ namespace NotesWebAPI.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpDelete("{id}")]
-        public IActionResult DeleteNote([Required] int id)
+        public IActionResult DeleteNote([Required] int noteId)
         {
             try
             {
@@ -224,9 +224,9 @@ namespace NotesWebAPI.Controllers
                     return Unauthorized();
                 }
 
-                _notesService.DeleteNote(id, userId);
+                _notesService.DeleteNote(noteId, userId);
 
-                Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Successfully deleted note[{id}] of user[{userId}]");
+                Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Successfully deleted note[{noteId}] of user[{userId}]");
 
                 return Ok();
             }

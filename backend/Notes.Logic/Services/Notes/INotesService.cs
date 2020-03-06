@@ -6,6 +6,7 @@ namespace Notes.Logic.Services.Notes
 {
     public interface INotesService
     {
+        #region notShared
         public IEnumerable<Note> ListNotes(int userId);
         public IEnumerable<Note> ListNotes(int userId, string search, int sorting, int display, int page);
         public Note GetNote(int noteId);
@@ -14,12 +15,15 @@ namespace Notes.Logic.Services.Notes
         public void DeleteNote(int noteId, int userId);
         public int GetNoteCount(int userId);
         public int GetNoteCount(int userId, string search);
+        #endregion
 
+        #region Shared
         public IEnumerable<Note> ListSharedNotes(int userId);
         public IEnumerable<Note> ListSharedNotes(int userId, string search, int sorting, int display, int page);
         public Note GetSharedNote(int noteId);
         public void UpdateSharedNote(int noteId, string title, string body, int userId, IEnumerable<SharingData> sharingUsersData);
         public int GetSharedNoteCount(int userId);
         public int GetSharedNoteCount(int userId, string search);
+        #endregion
     }
 }
