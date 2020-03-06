@@ -20,12 +20,16 @@ namespace Notes.Logic.Repositories.Shares.Implementation
 
         public IEnumerable<SharingProps> GetShares(int noteId)
         {
-            return _context.Sharing.Where(s => s.NoteId == noteId);
+            return _context.Sharing
+                .Include(i => i.User)
+                .Where(s => s.NoteId == noteId);
         }
 
         public async Task<SharingProps> GetShare(int noteId, int userId)
         {
-            return await _context.Sharing.FirstOrDefaultAsync(n => n.NoteId == noteId && n.UserId == userId);
+            return await _context.Sharing
+                .Include(i => i.User)
+                .FirstOrDefaultAsync(n => n.NoteId == noteId && n.UserId == userId);
         }
 
         public async Task<IEnumerable<SharingProps>> AddShares(IEnumerable<SharingProps> props)

@@ -20,9 +20,7 @@ namespace Notes.Logic.Repositories.Notes.Implementation
         #region nonShared
         public async Task<IEnumerable<Note>> GetNotes(int userId)
         {
-            return await _context.Notes
-                //.Include(n => n.User)
-                .Where(n => n.UserId == userId).ToListAsync();
+            return await _context.Notes.Where(n => n.UserId == userId).ToListAsync();
         }
 
         public async Task<Note> GetNote(int noteId)

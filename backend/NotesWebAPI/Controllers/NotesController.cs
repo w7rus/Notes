@@ -61,7 +61,7 @@ namespace NotesWebAPI.Controllers
                             Level = s.Level,
                             UserId = s.UserId,
                             Username = s.User.Username//_usersService.GetUsernameByUserId(s.UserId)
-                        }).ToList()
+                        })
                     }
                 ));
             }
@@ -94,12 +94,12 @@ namespace NotesWebAPI.Controllers
                         Body = n.Body,
                         Id = n.Id,
                         Title = n.Title,
-                        SharedUsersData = new List<SharingData>(_sharesService.GetShares(n.Id).Select(s => new SharingData()
+                        SharedUsersData = _sharesService.GetShares(n.Id).Select(s => new SharingData()
                         {
                             Level = s.Level,
                             UserId = s.UserId,
                             Username = s.User.Username//_usersService.GetUsernameByUserId(s.UserId)
-                        })).ToArray()
+                        })
                     }
                 ));
             }
@@ -137,12 +137,12 @@ namespace NotesWebAPI.Controllers
                     Body = note.Body,
                     Id = note.Id,
                     Title = note.Title,
-                    SharedUsersData = new List<SharingData>(_sharesService.GetShares(note.Id).Select(s => new SharingData()
+                    SharedUsersData = _sharesService.GetShares(note.Id).Select(s => new SharingData()
                     {
                         Level = s.Level,
                         UserId = s.UserId,
                         Username = s.User.Username//_usersService.GetUsernameByUserId(s.UserId)
-                    })).ToArray()
+                    })
                 };
             }
             catch (Exception e)
@@ -198,12 +198,12 @@ namespace NotesWebAPI.Controllers
                     Body = note.Body,
                     Id = note.Id,
                     Title = note.Title,
-                    SharedUsersData = new List<SharingData>(_sharesService.GetShares(note.Id).Select(s => new SharingData()
+                    SharedUsersData = _sharesService.GetShares(note.Id).Select(s => new SharingData()
                     {
                         Level = s.Level,
                         UserId = s.UserId,
                         Username = s.User.Username//_usersService.GetUsernameByUserId(s.UserId)
-                    })).ToArray()
+                    })
                 });
             }
             catch (Exception e)

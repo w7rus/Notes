@@ -61,8 +61,8 @@ namespace NotesWebAPI.Controllers
                         {
                             Level = s.Level,
                             UserId = s.UserId,
-                            Username = s.User.Username//_usersService.GetUsernameByUserId(s.UserId)
-                        }).ToArray()
+                            Username = s.User.Username//_usersService.GetUsernameByUserId(s.UserId) 
+                        })
                     }
                 ));
             }
@@ -100,7 +100,7 @@ namespace NotesWebAPI.Controllers
                             Level = s.Level,
                             UserId = s.UserId,
                             Username = s.User.Username//_usersService.GetUsernameByUserId(s.UserId)
-                        }).ToArray()
+                        })
                     }
                 ));
             }
@@ -153,7 +153,7 @@ namespace NotesWebAPI.Controllers
                         Level = s.Level,
                         UserId = s.UserId,
                         Username = s.User.Username//_usersService.GetUsernameByUserId(s.UserId)
-                    }).ToArray()
+                    })
                 };
             }
             catch (Exception e)
