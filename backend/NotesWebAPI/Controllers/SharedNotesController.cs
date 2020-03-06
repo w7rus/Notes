@@ -57,7 +57,12 @@ namespace NotesWebAPI.Controllers
                         Body = n.Body,
                         Id = n.Id,
                         Title = n.Title,
-                        SharedUsersData = new List<SharingData>().ToArray()
+                        SharedUsersData = new List<SharingData>(_sharesService.GetShares(n.Id).Where(s => s.UserId == userId).Select(s => new SharingData()
+                        {
+                            Level = s.Level,
+                            UserId = s.UserId,
+                            Username = _usersService.GetUsernameByUserId(s.UserId)
+                        })).ToArray()
                     }
                 ));
             }
@@ -90,7 +95,12 @@ namespace NotesWebAPI.Controllers
                         Body = n.Body,
                         Id = n.Id,
                         Title = n.Title,
-                        SharedUsersData = new List<SharingData>().ToArray()
+                        SharedUsersData = new List<SharingData>(_sharesService.GetShares(n.Id).Where(s => s.UserId == userId).Select(s => new SharingData()
+                        {
+                            Level = s.Level,
+                            UserId = s.UserId,
+                            Username = _usersService.GetUsernameByUserId(s.UserId)
+                        })).ToArray()
                     }
                 ));
             }
@@ -138,7 +148,12 @@ namespace NotesWebAPI.Controllers
                     Body = note.Body,
                     Id = note.Id,
                     Title = note.Title,
-                    SharedUsersData = new List<SharingData>().ToArray()
+                    SharedUsersData = new List<SharingData>(_sharesService.GetShares(note.Id).Where(s => s.UserId == userId).Select(s => new SharingData()
+                    {
+                        Level = s.Level,
+                        UserId = s.UserId,
+                        Username = _usersService.GetUsernameByUserId(s.UserId)
+                    })).ToArray()
                 };
             }
             catch (Exception e)
