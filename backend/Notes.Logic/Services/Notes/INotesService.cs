@@ -12,8 +12,14 @@ namespace Notes.Logic.Services.Notes
         public Note AddNote(string title, string body, int userId, IEnumerable<SharingData> sharingUsersData);
         public void UpdateNote(int noteId, string title, string body, int userId, IEnumerable<SharingData> sharingUsersData);
         public void DeleteNote(int noteId, int userId);
-
         public int GetNoteCount(int userId);
         public int GetNoteCount(int userId, string search);
+
+        public IEnumerable<Note> ListSharedNotes(int userId);
+        public IEnumerable<Note> ListSharedNotes(int userId, string search, int sorting, int display, int page);
+        public Note GetSharedNote(int noteId);
+        public void UpdateSharedNote(int noteId, string title, string body, int userId, IEnumerable<SharingData> sharingUsersData);
+        public int GetSharedNoteCount(int userId);
+        public int GetSharedNoteCount(int userId, string search);
     }
 }

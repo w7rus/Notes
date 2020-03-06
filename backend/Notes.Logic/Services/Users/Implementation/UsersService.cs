@@ -39,7 +39,7 @@ namespace Notes.Logic.Services.Users.Implementation
                 claims: new List<Claim>{
                         new Claim("user_id", user.Id.ToString())
                     },
-                expires: DateTime.Now.AddMinutes(60),
+                expires: DateTime.Now.AddMinutes(1440),
                 signingCredentials: signinCredentials
             );
 

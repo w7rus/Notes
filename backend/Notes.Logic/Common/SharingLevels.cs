@@ -8,6 +8,7 @@ namespace Notes.Logic.Common
     {
         public enum Level
         {
+            Restrict,
             Read,
             ReadWrite,
         }
