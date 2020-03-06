@@ -4,7 +4,8 @@ namespace Notes.Logic.Repositories.Users
 {
     public interface IUsersRepository
     {
-        User  FindUserBy(string username, string password);
-        void  AddUserWith(string username, string password);
+        public User  FindUserBy(string username, string password);
+        public void  AddUserWith(string username, string password);
+        public User FindUserByUserId(int userId);
     }
 }

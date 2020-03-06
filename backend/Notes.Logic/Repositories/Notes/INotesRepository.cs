@@ -5,9 +5,9 @@ namespace Notes.Logic.Repositories.Notes
 {
     public interface INotesRepository
     {
-        public IEnumerable<Note> GetNotes(int userid);
-        public Note GetNote(int noteid);
-        public void AddNote(Note note);
+        public IEnumerable<Note> GetNotes(int userId);
+        public Note GetNote(int noteId);
+        public Note AddNote(Note note);
         public void UpdateNote(Note note);
         public void DeleteNote(Note note);
     }

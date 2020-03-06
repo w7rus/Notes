@@ -7,10 +7,14 @@ using Microsoft.Extensions.Hosting;
 using Notes.Logic.Data;
 using Notes.Logic.Repositories.Notes;
 using Notes.Logic.Repositories.Notes.Implementation;
+using Notes.Logic.Repositories.Shares;
+using Notes.Logic.Repositories.Shares.Implementation;
 using Notes.Logic.Repositories.Users;
 using Notes.Logic.Repositories.Users.Implementation;
 using Notes.Logic.Services.Notes;
 using Notes.Logic.Services.Notes.Implementation;
+using Notes.Logic.Services.Shares;
+using Notes.Logic.Services.Shares.Implementation;
 using Notes.Logic.Services.Users;
 using Notes.Logic.Services.Users.Implementation;
 using NotesWebAPI.Extensions;
@@ -39,6 +43,8 @@ namespace NotesWebAPI
             services.AddScoped<IUsersRepository, UsersRepository>();
             services.AddScoped<INotesService, NotesService>();
             services.AddScoped<INotesRepository, NotesRepository>();
+            services.AddScoped<ISharesService, SharesService>();
+            services.AddScoped<ISharesRepository, SharesRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

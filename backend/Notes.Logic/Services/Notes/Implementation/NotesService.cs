@@ -3,26 +3,31 @@ using System.Collections.Generic;
 using System.Linq;
 using Notes.Logic.Models.Database;
 using Notes.Logic.Repositories.Notes;
+using Notes.Logic.Repositories.Shares;
+using Notes.Logic.Services.Shares;
+using NotesWebAPI.Models.View.Request;
 
 namespace Notes.Logic.Services.Notes.Implementation
 {
     public class NotesService : INotesService
     {
         private readonly INotesRepository _notesRepository;
+        private readonly ISharesService _sharesService;
 
-        public NotesService(INotesRepository notesRepository)
+        public NotesService(INotesRepository notesRepository, ISharesService sharesService)
         {
             _notesRepository = notesRepository;
+            _sharesService = sharesService;
         }
 
-        public IEnumerable<Note> ListNotes(int userid)
+        public IEnumerable<Note> ListNotes(int userId)
         {
-            return _notesRepository.GetNotes(userid);
+            return _notesRepository.GetNotes(userId);
         }
 
-        public IEnumerable<Note> ListNotes(int userid, string search, int sorting, int display, int page)
+        public IEnumerable<Note> ListNotes(int userId, string search, int sorting, int display, int page)
         {
-            var notes = _notesRepository.GetNotes(userid);
+            var notes = _notesRepository.GetNotes(userId);
 
             //Sorting
             switch (sorting)
@@ -54,62 +59,65 @@ namespace Notes.Logic.Services.Notes.Implementation
             return notes;
         }
 
-        public Note GetNote(int noteid)
+        public Note GetNote(int noteId)
         {
-            return _notesRepository.GetNote(noteid);
+            return _notesRepository.GetNote(noteId);
         }
 
-        public Note AddNote(string title, string body, int userid)
+        public Note AddNote(string title, string body, int userId, IEnumerable<SharingData> sharingUsersData)
         {
             var note = new Note
             {
-                UserId = userid,
+                UserId = userId,
                 Title = title,
                 Body = body
             };
 
-            _notesRepository.AddNote(note);
+            var addedNote = _notesRepository.AddNote(note);
+            _sharesService.AddShares(addedNote.Id, sharingUsersData);
 
             return note;
         }
 
-        public void UpdateNote(int noteid, string title, string body, int userid)
+        public void UpdateNote(int noteId, string title, string body, int userId, IEnumerable<SharingData> sharingUsersData)
         {
-            var note = _notesRepository.GetNote(noteid);
+            var note = _notesRepository.GetNote(noteId);
 
             if (note == null)
-                throw new ArgumentException($"Note[{noteid}] does not exists!");
+                throw new ArgumentException($"Note[{noteId}] does not exists!");
 
-            if (note.UserId != userid)
-                throw new InvalidOperationException($"User[{userid}] does not have permissions to operate with note[{note.UserId}]");
+            if (note.UserId != userId)
+                throw new InvalidOperationException($"User[{userId}] does not have permissions to operate with note[{note.UserId}]");
 
             note.Title = title;
             note.Body = body;
 
             _notesRepository.UpdateNote(note);
+            _sharesService.UpdateShares(noteId, sharingUsersData);
         }
 
-        public void DeleteNote(int noteid, int userid)
+        public void DeleteNote(int noteId, int userId)
         {
-            var note = _notesRepository.GetNote(noteid);
+            var note = _notesRepository.GetNote(noteId);
 
             if (note == null)
-                throw new ArgumentException($"Note[{noteid}] does not exists!");
+                throw new ArgumentException($"Note[{noteId}] does not exists!");
 
-            if (note.UserId != userid)
-                throw new InvalidOperationException($"User[{userid}] does not have permissions to operate with note[{note.UserId}]");
+            if (note.UserId != userId)
+                throw new InvalidOperationException($"User[{userId}] does not have permissions to operate with note[{note.UserId}]");
 
             _notesRepository.DeleteNote(note);
+            _sharesService.DeleteShares(noteId);
         }
 
-        public int GetNoteCount(int userid)
+        public int GetNoteCount(int userId)
         {
-            return _notesRepository.GetNotes(userid).Count();
+            return _notesRepository.GetNotes(userId).Count();
         }
 
-        public int GetNoteCount(int userid, string search)
+        public int GetNoteCount(int userId, string search)
         {
-            var notes = _notesRepository.GetNotes(userid);
+            var notes = _notesRepository.GetNotes(userId);
 
             //Search
 

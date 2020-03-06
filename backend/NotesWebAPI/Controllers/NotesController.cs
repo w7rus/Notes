@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using Notes.Logic.Services.Notes;
 using NotesWebAPI.Models.View.Request;
 using Notes.Logic.Models;
+using Notes.Logic.Repositories.Shares;
+using Notes.Logic.Services.Shares;
+using Notes.Logic.Services.Users;
 using Serilog;
 
 namespace NotesWebAPI.Controllers
@@ -17,10 +20,17 @@ namespace NotesWebAPI.Controllers
     public class NotesController : ControllerBase
     {
         private readonly INotesService _notesService;
+        private readonly ISharesService _sharesService;
+        private readonly IUsersService _usersService;
 
-        public NotesController(INotesService notesServiceService)
+        public NotesController(INotesService notesService
+            , ISharesService sharesService
+            , IUsersService usersService
+            )
         {
-            _notesService = notesServiceService;
+            _notesService = notesService;
+            _sharesService = sharesService;
+            _usersService = usersService;
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -44,7 +54,13 @@ namespace NotesWebAPI.Controllers
                     {
                         Body = n.Body,
                         Id = n.Id,
-                        Title = n.Title
+                        Title = n.Title,
+                        SharedUsersData = new List<SharingData>(_sharesService.GetShares(n.Id).Select(s => new SharingData()
+                        {
+                            Level = s.Level,
+                            UserId = s.UserId,
+                            Username = _usersService.GetUsernameByUserId(s.UserId)
+                        }))
                     }
                 ));
             }
@@ -76,7 +92,13 @@ namespace NotesWebAPI.Controllers
                     {
                         Body = n.Body,
                         Id = n.Id,
-                        Title = n.Title
+                        Title = n.Title,
+                        SharedUsersData = new List<SharingData>(_sharesService.GetShares(n.Id).Select(s => new SharingData()
+                        {
+                            Level = s.Level,
+                            UserId = s.UserId,
+                            Username = _usersService.GetUsernameByUserId(s.UserId)
+                        }))
                     }
                 ));
             }
@@ -113,7 +135,13 @@ namespace NotesWebAPI.Controllers
                 {
                     Body = note.Body,
                     Id = note.Id,
-                    Title = note.Title
+                    Title = note.Title,
+                    SharedUsersData = new List<SharingData>(_sharesService.GetShares(note.Id).Select(s => new SharingData()
+                    {
+                        Level = s.Level,
+                        UserId = s.UserId,
+                        Username = _usersService.GetUsernameByUserId(s.UserId)
+                    }))
                 };
             }
             catch (Exception e)
@@ -135,7 +163,7 @@ namespace NotesWebAPI.Controllers
                     return Unauthorized();
                 }
 
-                _notesService.UpdateNote(id, model.Title, model.Body, userId);
+                _notesService.UpdateNote(id, model.Title, model.Body, userId, model.SharedUsersData);
 
                 Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Successfully updated note[{id}] of user[{userId}]");
 
@@ -160,7 +188,7 @@ namespace NotesWebAPI.Controllers
                     return Unauthorized();
                 }
 
-                var note = _notesService.AddNote(model.Title, model.Body, userId);
+                var note = _notesService.AddNote(model.Title, model.Body, userId, model.SharedUsersData);
 
                 Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Successfully added note[{note.Id}] of user[{userId}]");
 
@@ -168,7 +196,13 @@ namespace NotesWebAPI.Controllers
                 {
                     Body = note.Body,
                     Id = note.Id,
-                    Title = note.Title
+                    Title = note.Title,
+                    SharedUsersData = new List<SharingData>(_sharesService.GetShares(note.Id).Select(s => new SharingData()
+                    {
+                        Level = s.Level,
+                        UserId = s.UserId,
+                        Username = _usersService.GetUsernameByUserId(s.UserId)
+                    }))
                 });
             }
             catch (Exception e)

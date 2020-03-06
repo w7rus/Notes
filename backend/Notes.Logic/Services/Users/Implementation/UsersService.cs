@@ -58,5 +58,15 @@ namespace Notes.Logic.Services.Users.Implementation
 
             _usersRepository.AddUserWith(username, password);
         }
+
+        public string GetUsernameByUserId(int userId)
+        {
+            var user =_usersRepository.FindUserByUserId(userId);
+
+            if (user == null)
+                throw new InvalidOperationException("Specified user is not found!");
+
+            return user.Username;
+        }
     }
 }

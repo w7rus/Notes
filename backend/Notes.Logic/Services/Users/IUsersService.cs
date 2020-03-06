@@ -4,7 +4,8 @@ namespace Notes.Logic.Services.Users
 {
     public interface IUsersService
     {
-        LoginResult LoginUser(string username, string password);
-        void RegisterUser(string username, string password, string passwordRepeat);
+        public LoginResult LoginUser(string username, string password);
+        public void RegisterUser(string username, string password, string passwordRepeat);
+        public string GetUsernameByUserId(int userId);
     }
 }

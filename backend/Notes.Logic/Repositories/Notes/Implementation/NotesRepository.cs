@@ -14,20 +14,22 @@ namespace Notes.Logic.Repositories.Notes.Implementation
             _context = context;
         }
 
-        public IEnumerable<Note> GetNotes(int userid)
+        public IEnumerable<Note> GetNotes(int userId)
         {
-            return _context.Notes.Where(n => n.UserId == userid).ToList();
+            return _context.Notes.Where(n => n.UserId == userId).ToList();
         }
 
-        public Note GetNote(int noteid)
+        public Note GetNote(int noteId)
         {
-            return _context.Notes.Find(noteid);
+            return _context.Notes.Find(noteId);
         }
 
-        public void AddNote(Note note)
+        public Note AddNote(Note note)
         {
             _context.Notes.Add(note);
             _context.SaveChanges();
+
+            return note;
         }
 
         public void UpdateNote(Note note)

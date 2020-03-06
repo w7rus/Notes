@@ -19,6 +19,11 @@ namespace Notes.Logic.Repositories.Users.Implementation
             _context.SaveChanges();
         }
 
+        public User FindUserByUserId(int userId)
+        {
+            return _context.Users.Find(userId);
+        }
+
         public User FindUserBy(string username, string password)
         {
             return _context.Users.SingleOrDefault(u => u.Username == username && u.Password == password);
