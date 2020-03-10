@@ -8,5 +8,6 @@ namespace Notes.Logic.Services.Users
         public Task<LoginResult> LoginUser(string username, string password);
         public Task RegisterUser(string username, string password, string passwordRepeat);
         public Task<string> GetUsernameByUserId(int userId);
+        public Task<int> GetUserIdByUsername(string username);
     }
 }

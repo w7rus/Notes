@@ -69,5 +69,15 @@ namespace Notes.Logic.Services.Users.Implementation
 
             return user.Username;
         }
+
+        public async Task<int> GetUserIdByUsername(string username)
+        {
+            var user = await _usersRepository.FindUserByUsername(username);
+
+            if (user == null)
+                throw new InvalidOperationException("Specified user is not found!");
+
+            return user.Id;
+        }
     }
 }
