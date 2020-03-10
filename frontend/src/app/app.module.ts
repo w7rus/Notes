@@ -14,6 +14,8 @@ import { PageLoginComponent } from './page-login/page-login.component';
 import { PageRegisterComponent } from './page-register/page-register.component';
 import { PageNotesListComponent } from './page-dashboard/page-notes-list/page-notes-list.component';
 import { PageNotesEditComponent } from './page-dashboard/page-notes-edit/page-notes-edit.component';
+import { PageSharednotesListComponent } from './page-dashboard/page-sharednotes-list/page-sharednotes-list.component';
+import { PageSharednotesEditComponent } from './page-dashboard/page-sharednotes-edit/page-sharednotes-edit.component';
 
 export function tokenGetter() {
   return localStorage.getItem("jwt");
@@ -26,7 +28,9 @@ export function tokenGetter() {
     PageLoginComponent,
     PageRegisterComponent,
     PageNotesListComponent,
-    PageNotesEditComponent
+    PageNotesEditComponent,
+    PageSharednotesListComponent,
+    PageSharednotesEditComponent
   ],
   imports: [
     BrowserModule,

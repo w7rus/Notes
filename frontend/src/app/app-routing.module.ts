@@ -13,6 +13,8 @@ import { NotFoundComponent } from './not-found/not-found.component'
 import { AuthGuard } from './_guards/auth-guard.service';
 import { PageNotesListComponent } from './page-dashboard/page-notes-list/page-notes-list.component';
 import { PageNotesEditComponent } from './page-dashboard/page-notes-edit/page-notes-edit.component';
+import { PageSharednotesListComponent } from './page-dashboard/page-sharednotes-list/page-sharednotes-list.component';
+import { PageSharednotesEditComponent } from './page-dashboard/page-sharednotes-edit/page-sharednotes-edit.component';
 
 const routes: Routes = [
   {
@@ -49,6 +51,16 @@ const routes: Routes = [
   {
     path: 'dashboard/notes/:id',
     component: PageNotesEditComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'dashboard/sharednotes',
+    component: PageSharednotesListComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'dashboard/sharednotes/:id',
+    component: PageSharednotesEditComponent,
     canActivate: [AuthGuard]
   },
   {

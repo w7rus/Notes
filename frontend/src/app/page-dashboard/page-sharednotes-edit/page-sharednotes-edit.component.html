@@ -1,0 +1,27 @@
+<main role="main" class="container-fluid">
+  <div class="d-flex flex-column align-items-center" style="height: 100%;">
+    <div class="my-auto text-center p-2 col-xs-12 col-sm-8" style="flex: none;">
+      <form [formGroup]="updateForm" (ngSubmit)="updateNote()" novalidate>
+        <div class="form-group">
+          <label for="noteTitle">Title</label>
+          <input type="text" class="form-control" id="noteTitle" formControlName="title" [readonly]="!canEdit" [ngClass]="{
+            'is-invalid': canEdit && updateForm.controls.title.invalid && (updateForm.controls.title.dirty || updateForm.controls.title.touched),
+            'is-valid': canEdit && updateForm.controls.title.valid && (updateForm.controls.title.dirty || updateForm.controls.title.touched)
+          }">
+        </div>
+        <div class="form-group">
+          <label for="noteBody">Body</label>
+          <textarea id="noteBody" class="form-control" rows="6" formControlName="body" [readonly]="!canEdit" [ngClass]="{
+            'is-invalid': canEdit && updateForm.controls.body.invalid && (updateForm.controls.body.dirty || updateForm.controls.body.touched),
+            'is-valid': canEdit && updateForm.controls.body.valid && (updateForm.controls.body.dirty || updateForm.controls.body.touched)
+          }"></textarea>
+        </div>
+        <div class="btn-group btn-block" role="group">
+          <button *ngIf="canEdit" type="submit" class="btn btn-primary" [disabled]="!updateForm.valid"><i class="fas fa-save"></i> Save</button>
+          <a *ngIf="canEdit" class="btn btn-secondary" href="dashboard/sharednotes" role="button"><i class="fas fa-times"></i> Cancel</a>
+          <a *ngIf="!canEdit" class="btn btn-secondary" href="dashboard/sharednotes" role="button"><i class="fas fa-arrow-left"></i> Go Back</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>

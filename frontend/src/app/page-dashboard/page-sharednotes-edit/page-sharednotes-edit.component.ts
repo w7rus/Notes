@@ -1,22 +1,23 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-page-notes-edit',
-  templateUrl: './page-notes-edit.component.html',
-  styleUrls: ['./page-notes-edit.component.css'],
+  selector: 'app-page-sharednotes-edit',
+  templateUrl: './page-sharednotes-edit.component.html',
+  styleUrls: ['./page-sharednotes-edit.component.css'],
   host: {
     class:'d-flex',
     style:'height: 100%;'
   }
 })
-export class PageNotesEditComponent implements OnInit {
+export class PageSharednotesEditComponent implements OnInit {
 
   id: number;
   updateForm: FormGroup;
+  canEdit: boolean;
 
   constructor(
     private http: HttpClient,
@@ -24,7 +25,7 @@ export class PageNotesEditComponent implements OnInit {
     private jwtHelper: JwtHelperService,
     private activateRoute: ActivatedRoute,
     private router: Router
-  ) {
+  ) { 
     this.id = this.activateRoute.snapshot.params['id'];
   }
 
@@ -38,10 +39,9 @@ export class PageNotesEditComponent implements OnInit {
 
   updateNote() {
     if (this.isUserAuthenticated()) {
-      this.http.put("http://localhost:5000/api/notes/" + this.id, {
+      this.http.put("http://localhost:5000/api/sharednotes/" + this.id, {
         "title": this.updateForm.controls.title.value,
-        "body": this.updateForm.controls.body.value,
-        "sharedUsersData": null
+        "body": this.updateForm.controls.body.value
       }, {
         headers: new HttpHeaders({
           "Content-Type": "application/json"
@@ -49,7 +49,7 @@ export class PageNotesEditComponent implements OnInit {
       }).subscribe(response => {
         this.updateForm.controls.title.reset();
         this.updateForm.controls.body.reset();
-        this.router.navigate(["/dashboard/notes"]);
+        this.router.navigate(["/dashboard/sharednotes"]);
       }, err => {
         console.log(err);
       });
@@ -63,7 +63,7 @@ export class PageNotesEditComponent implements OnInit {
     });
 
     if (this.isUserAuthenticated()) {
-      this.http.get("http://localhost:5000/api/notes/" + this.id, {
+      this.http.get("http://localhost:5000/api/sharednotes/" + this.id, {
         headers: new HttpHeaders({
           "Content-Type": "application/json"
         })
@@ -81,9 +81,10 @@ export class PageNotesEditComponent implements OnInit {
 
         this.updateForm.controls.title.setValue(data.title);
         this.updateForm.controls.body.setValue(data.body);
+        this.canEdit = data.sharedUsersData.find(x=>x!==undefined).level > 1;
       }, err => {
         console.log(err);
-        this.router.navigate(["/dashboard/notes"]);
+        this.router.navigate(["/dashboard/sharednotes"]);
       });
     }
   }
