@@ -89,7 +89,7 @@ namespace NotesWebAPI.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("list")]
-        public async Task<ActionResult<ICollection<NoteResult>>> NoteListFiltered([Required][FromBody] SearchRequestModel model)
+        public async Task<ActionResult<ICollection<NoteResult>>> NoteListFiltered([Required][FromBody] DashboardNoteFilterRequest model)
         {
             try
             {
@@ -197,7 +197,7 @@ namespace NotesWebAPI.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPut("{noteId}")]
-        public async Task<IActionResult> UpdateNote([Required] int noteId, [Required][FromBody] NoteRequestModel model)
+        public async Task<IActionResult> UpdateNote([Required] int noteId, [Required][FromBody] DashboardNoteRequest model)
         {
             try
             {
@@ -222,7 +222,7 @@ namespace NotesWebAPI.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
-        public async Task<ActionResult<NoteResult>> AddNote([Required][FromBody] NoteRequestModel model)
+        public async Task<ActionResult<NoteResult>> AddNote([Required][FromBody] DashboardNoteRequest model)
         {
             try
             {
@@ -321,7 +321,7 @@ namespace NotesWebAPI.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("countFiltered")]
-        public async Task<IActionResult> NoteCountFiltered([Required][FromBody] SearchRequestModel model)
+        public async Task<IActionResult> NoteCountFiltered([Required][FromBody] DashboardNoteFilterRequest model)
         {
             try
             {

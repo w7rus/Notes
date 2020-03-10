@@ -88,7 +88,7 @@ namespace Notes.Logic.Services.Notes.Implementation
             note.Body = body;
 
             await _notesRepository.UpdateNote(note);
-            await _sharesService.UpdateShares(noteId, sharingUsersData);
+            //await _sharesService.UpdateShares(noteId, sharingUsersData);
         }
 
         public async Task DeleteNote(int noteId, int userId)

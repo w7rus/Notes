@@ -24,7 +24,7 @@ namespace NotesWebAPI.Controllers
         // Send JWT token on successful login data
         [HttpPost, Route("login")]
         [AllowAnonymous]
-        public async Task<ActionResult<LoginResult>> Login([Required][FromBody] LoginRequestModel model)
+        public async Task<ActionResult<LoginResult>> Login([Required][FromBody] LoginRequest model)
         {
             try
             {
@@ -43,7 +43,7 @@ namespace NotesWebAPI.Controllers
         // Add new user to the database
         [HttpPost, Route("register")]
         [AllowAnonymous]
-        public async Task<IActionResult> Register([Required][FromBody] RegisterRequestModel model)
+        public async Task<IActionResult> Register([Required][FromBody] AuthRegisterRequest model)
         {
             try
             {
