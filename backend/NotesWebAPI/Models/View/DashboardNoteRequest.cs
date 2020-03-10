@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace NotesWebAPI.Models.View.Request
 {
-    public class NoteRequestModel
+    public class DashboardNoteRequest
     {
         [Required]
         public string Title { get; set; }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NotesWebAPI.Models.View.Request
 {
-    public class SearchRequestModel
+    public class DashboardNoteFilterRequest
     {
         public string Search { get; set; }
         [Required]

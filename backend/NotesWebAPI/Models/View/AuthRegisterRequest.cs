@@ -2,7 +2,7 @@
 
 namespace NotesWebAPI.Models.View.Request
 {
-    public class RegisterRequestModel
+    public class AuthRegisterRequest
     {
         [Required]
         public string Username { get; set; }
