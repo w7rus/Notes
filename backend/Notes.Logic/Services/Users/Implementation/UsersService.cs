@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Notes.Logic.Models;
+using Notes.Logic.Models.Database;
 using Notes.Logic.Repositories.Users;
 
 namespace Notes.Logic.Services.Users.Implementation
@@ -78,6 +80,35 @@ namespace Notes.Logic.Services.Users.Implementation
                 throw new InvalidOperationException("Specified user is not found!");
 
             return user.Id;
+        }
+
+        public async Task<ICollection<User>> ListUsers()
+        {
+            return await _usersRepository.GetUsers();
+        }
+
+        public async Task<ICollection<User>> ListUsers(string search, int sorting, int display, int page)
+        {
+            IEnumerable<User> users = await _usersRepository.GetUsers();
+
+            //Sorting
+            users = sorting switch
+            {
+                0 => users.OrderBy(u => u.Username),
+                1 => users.OrderByDescending(u => u.Username),
+                _ => users.OrderBy(u => u.Username),
+            };
+
+            //Search
+
+            if (!string.IsNullOrEmpty(search))
+                users = users.Where(u => u.Username.Contains(search));
+
+            //Pagination
+
+            users = users.Skip(display * (page)).Take(display);
+
+            return users.ToArray();
         }
     }
 }

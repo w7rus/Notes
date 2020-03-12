@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Notes.Logic.Models.Database;
 
 namespace Notes.Logic.Repositories.Users
@@ -9,5 +10,6 @@ namespace Notes.Logic.Repositories.Users
         public Task  AddUserWith(string username, string password);
         public Task<User> FindUserByUserId(int userId);
         public Task<User> FindUserByUsername(string username);
+        public Task<ICollection<User>> GetUsers();
     }
 }

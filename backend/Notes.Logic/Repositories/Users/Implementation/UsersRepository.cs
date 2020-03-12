@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,6 +31,11 @@ namespace Notes.Logic.Repositories.Users.Implementation
         public async Task<User> FindUserByUsername(string username)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+        }
+
+        public async Task<ICollection<User>> GetUsers()
+        {
+            return await _context.Users.ToListAsync();
         }
 
         public async Task<User> FindUserBy(string username, string password)
