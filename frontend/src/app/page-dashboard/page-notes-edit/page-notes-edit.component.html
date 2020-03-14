@@ -1,26 +1,253 @@
-<main role="main" class="container-fluid">
+<div class="modal fade" id="sharingModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="sharingModalLabel">Sharing</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-success" role="alert" *ngIf="shareUpdateSuccess">
+          Successfully updated share for note!
+        </div>
+        <div class="alert alert-danger" role="alert" *ngIf="shareUpdateFail">
+          Failed to update share for note! {{shareUpdateFailString}}
+        </div>
+        <nav>
+          <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <a class="nav-item nav-link active" data-toggle="tab" href="#sharingModalShareList" role="tab" aria-controls="sharingModalShareList" aria-selected="true"> Shares</a>
+            <a class="nav-item nav-link" data-toggle="tab" href="#sharingModalUserList" role="tab" aria-controls="sharingModalUserList" aria-selected="false"> Find</a>
+          </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+          <div class="tab-pane fade show active" id="sharingModalShareList" role="tabpanel">
+            <div class="alert alert-info my-2" role="alert" *ngIf="shareCount == 0">
+              You have not yet shared your note to anybody!
+            </div>
+            <table class="table table-sm" *ngIf="shareCount > 0">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">ID</th>
+                  <th scope="col">Username</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let share of shareList; index as i;">
+                  <th scope="row">{{i + 1}}</th>
+                  <th>{{share.userId}}</th>
+                  <td>{{share.username}}</td>
+                  <td>
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                      <button type="button" class="btn btn-sm" [ngClass]="{
+                        'btn-primary': share.level == 0,
+                        'btn-outline-primary': share.level != 0
+                      }" (click)="updateShare(share.userId, 0)">None</button>
+                      <button type="button" class="btn btn-sm" [ngClass]="{
+                        'btn-primary': share.level == 1,
+                        'btn-outline-primary': share.level != 1
+                      }" (click)="updateShare(share.userId, 1)">Read</button>
+                      <button type="button" class="btn btn-sm" [ngClass]="{
+                        'btn-primary': share.level == 2,
+                        'btn-outline-primary': share.level != 2
+                      }"(click)="updateShare(share.userId, 2)">Read/Write</button>
+                      <button class="btn btn-danger btn-sm" (click)="deleteShare(share.userId)"><i class="fas fa-trash"></i></button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <nav class="my-2" *ngIf="shareCount > 0">
+              <ul class="pagination justify-content-center">
+                <li class="page-item" [ngClass]="{
+                  'disabled': this.sharePageSelected == 0
+                }">
+                  <button class="page-link" (click)="searchShares(0)">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">First</span>
+                  </button>
+                </li>
+                <li class="page-item" [ngClass]="{
+                  'disabled': this.sharePageSelected == 0
+                }">
+                  <button class="page-link" (click)="searchShares(this.sharePageSelected - 1)">
+                    <span aria-hidden="true">&lsaquo;</span>
+                    <span class="sr-only">Previous</span>
+                  </button>
+                </li>
+                <li class="page-item" *ngFor="let page of ' '.repeat(sharePageCount).split(''); index as i;" [ngClass]="{
+                  'active': this.sharePageSelected == i
+                }">
+                  <button class="page-link" (click)="searchShares(i)">{{ i + 1 }}</button>
+                </li>
+                <li class="page-item" [ngClass]="{
+                  'disabled': this.sharePageSelected == sharePageCount - 1
+                }">
+                  <button class="page-link" (click)="searchShares(this.sharePageSelected + 1)">
+                    <span aria-hidden="true">&rsaquo;</span>
+                    <span class="sr-only">Next</span>
+                  </button>
+                </li>
+                <li class="page-item" [ngClass]="{
+                  'disabled': this.sharePageSelected == sharePageCount - 1
+                }">
+                  <button class="page-link" (click)="searchShares(sharePageCount - 1)" style="border-top-right-radius: .25rem; border-bottom-right-radius: .25rem;">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Last</span>
+                  </button>
+                </li>
+                <li class="page-item ml-2" [ngClass]="{
+                  'disabled': this.sharePageSelected == 0
+                }">
+                  <form [formGroup]="sharePaginationForm">
+                    <select class="custom-select" id="sharePaginationFormDisplay" formControlName="display" (change)="searchShares()">
+                      <option *ngFor="let shareCountOnPage of shareCountPerPage; index as i;" [attr.selected]="(i == 1) ? 'selected' : null">{{ shareCountOnPage }}</option>
+                    </select>
+                  </form>
+                </li>
+              </ul>
+            </nav>
+          </div>
+          <div class="tab-pane fade" id="sharingModalUserList" role="tabpanel">
+            <form class="my-3" [formGroup]="userFilterForm">
+              <div class="form-row">
+                <div class="form-group col">
+                  <input type="text" class="form-control" id="userFilterFormUsername" formControlName="username" (input)="searchUsers()" placeholder="Start typing username...">
+                </div>
+              </div>
+            </form>
+            <table class="table table-sm" *ngIf="userCount > 0">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">ID</th>
+                  <th scope="col">Username</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let user of userList; index as i;">
+                  <th scope="row">{{i + 1}}</th>
+                  <th>{{user.id}}</th>
+                  <td>{{user.username}}</td>
+                  <td>
+                    <button class="btn btn-primary" (click)="addShare(user.id)"><i class="fas fa-plus"></i></button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <nav class="my-2" *ngIf="userCount > 0">
+              <ul class="pagination justify-content-center">
+                <li class="page-item" [ngClass]="{
+                  'disabled': this.userPageSelected == 0
+                }">
+                  <button class="page-link" (click)="searchUsers(0)">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">First</span>
+                  </button>
+                </li>
+                <li class="page-item" [ngClass]="{
+                  'disabled': this.userPageSelected == 0
+                }">
+                  <button class="page-link" (click)="searchUsers(this.userPageSelected - 1)">
+                    <span aria-hidden="true">&lsaquo;</span>
+                    <span class="sr-only">Previous</span>
+                  </button>
+                </li>
+                <li class="page-item" *ngFor="let page of ' '.repeat(userPageCount).split(''); index as i;" [ngClass]="{
+                  'active': this.userPageSelected == i
+                }">
+                  <button class="page-link" (click)="searchUsers(i)">{{ i + 1 }}</button>
+                </li>
+                <li class="page-item" [ngClass]="{
+                  'disabled': this.userPageSelected == userPageCount - 1
+                }">
+                  <button class="page-link" (click)="searchUsers(this.userPageSelected + 1)">
+                    <span aria-hidden="true">&rsaquo;</span>
+                    <span class="sr-only">Next</span>
+                  </button>
+                </li>
+                <li class="page-item" [ngClass]="{
+                  'disabled': this.userPageSelected == userPageCount - 1
+                }">
+                  <button class="page-link" (click)="searchUsers(userPageCount - 1)" style="border-top-right-radius: .25rem; border-bottom-right-radius: .25rem;">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Last</span>
+                  </button>
+                </li>
+                <li class="page-item ml-2" [ngClass]="{
+                  'disabled': this.userPageSelected == 0
+                }">
+                  <form [formGroup]="userPaginationForm">
+                    <select class="custom-select" id="userPaginationFormDisplay" formControlName="display" (change)="searchUsers()">
+                      <option *ngFor="let userCountOnPage of userCountPerPage; index as i;" [attr.selected]="(i == 1) ? 'selected' : null">{{ userCountOnPage }}</option>
+                    </select>
+                  </form>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main role="main" class="container">
   <div class="d-flex flex-column align-items-center" style="height: 100%;">
-    <div class="my-auto text-center p-2 col-xs-12 col-sm-8" style="flex: none;">
-      <form [formGroup]="updateForm" (ngSubmit)="updateNote()" novalidate>
-        <div class="form-group">
-          <label for="noteTitle">Title</label>
-          <input type="text" class="form-control" id="noteTitle" formControlName="title" [ngClass]="{
-            'is-invalid': updateForm.controls.title.invalid && (updateForm.controls.title.dirty || updateForm.controls.title.touched),
-            'is-valid': updateForm.controls.title.valid && (updateForm.controls.title.dirty || updateForm.controls.title.touched)
-          }">
+    <div class="my-auto p-2 col-xs-12 col-sm-8" style="flex: none;">
+      <div class="row">
+        <div class="col">
+          <div class="alert alert-success" role="alert" *ngIf="noteUpdateSuccess">
+            Successfully updated shared note!
+          </div>
+          <div class="alert alert-danger" role="alert" *ngIf="noteUpdateFail">
+            Failed to update shared note! {{noteUpdateFailString}}
+          </div>
         </div>
-        <div class="form-group">
-          <label for="noteBody">Body</label>
-          <textarea id="noteBody" class="form-control" rows="6" formControlName="body" [ngClass]="{
-            'is-invalid': updateForm.controls.body.invalid && (updateForm.controls.body.dirty || updateForm.controls.body.touched),
-            'is-valid': updateForm.controls.body.valid && (updateForm.controls.body.dirty || updateForm.controls.body.touched)
-          }"></textarea>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="card my-3">
+            <div class="card-header">
+              <div class="row">
+                <div class="col text-left">
+                  <a class="btn btn-dark" href="notes" role="button"><i class="fas fa-arrow-left"></i> Back</a>
+                </div>
+                <div class="col text-right">
+                  <div class="btn-group">
+                    <button class="btn btn-primary" [disabled]="!noteForm.valid" (click)="updateNote()"><i class="fas fa-save"></i> Save</button>
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#sharingModal"><i class="fas fa-share-alt"></i> Share</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <form [formGroup]="noteForm" (ngSubmit)="updateNote()" novalidate>
+                <div class="form-group">
+                  <label for="noteTitle">Title:</label>
+                  <input type="text" class="form-control" id="noteTitle" formControlName="title" [ngClass]="{
+                    'is-invalid': noteForm.controls.title.invalid && (noteForm.controls.title.dirty || noteForm.controls.title.touched),
+                    'is-valid': noteForm.controls.title.valid && (noteForm.controls.title.dirty || noteForm.controls.title.touched)
+                  }">
+                </div>
+                <div class="form-group">
+                  <label for="noteBody">Body:</label>
+                  <textarea id="noteBody" class="form-control" rows="6" formControlName="body" [ngClass]="{
+                    'is-invalid': noteForm.controls.body.invalid && (noteForm.controls.body.dirty || noteForm.controls.body.touched),
+                    'is-valid': noteForm.controls.body.valid && (noteForm.controls.body.dirty || noteForm.controls.body.touched)
+                  }"></textarea>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
-        <div class="btn-group btn-block" role="group">
-          <button type="submit" class="btn btn-primary" [disabled]="!updateForm.valid"><i class="fas fa-save"></i> Save</button>
-          <a class="btn btn-secondary" href="dashboard/notes" role="button"><i class="fas fa-times"></i> Cancel</a>
-        </div>
-      </form>
+      </div>
     </div>
   </div>
 </main>

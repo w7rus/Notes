@@ -3,21 +3,30 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
+interface Note {
+  id: number,
+  title: string,
+  body: string
+}
+
 @Component({
   selector: 'app-page-sharednotes-list',
   templateUrl: './page-sharednotes-list.component.html',
   styleUrls: ['./page-sharednotes-list.component.css']
 })
 export class PageSharednotesListComponent implements OnInit {
+  noteForm: FormGroup;
+  noteFilterForm: FormGroup;
+  notePaginationForm: FormGroup;
+  noteCountPerPage: number[] = [5, 10, 20, 30, 40, 50]
 
-  searchForm: FormGroup;
-  pageForm: FormGroup;
+  noteList: Note[];
+  noteCount: number = 0;
+  notePageSelected: number = 0;
+  notePageCount: number = 0;
 
-  items: any[];
-  itemsCount: number;
-  pageSelected: number;
-  pageCount: number;
-  pageDisplays: number[] = [5, 10, 20, 30, 40, 50]
+  noteCountDisplay: number = 0;
+  noteCountTotal: number = 0;
 
   constructor(
     private http: HttpClient,
@@ -25,6 +34,7 @@ export class PageSharednotesListComponent implements OnInit {
     private jwtHelper: JwtHelperService
   ) { }
 
+  //Auth
   isUserAuthenticated() {
     let token: string = localStorage.getItem("jwt")
     if (token && !this.jwtHelper.isTokenExpired(token))
@@ -33,58 +43,78 @@ export class PageSharednotesListComponent implements OnInit {
       return false
   }
 
+  //Note
+  readNotesCount() {
+    this.http.post("http://localhost:5000/api/sharednotes/countFiltered", {
+      "search": this.noteFilterForm.controls.title.value
+    }, {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json"
+      })
+    }).subscribe(response => {
+      this.noteCount = <number>response;
+      this.notePageCount = Math.ceil(this.noteCount / parseInt(this.notePaginationForm.controls.display.value));
+    }, err => {
+      console.log(err)
+    });
+  }
+
+  readNotesCountTotal() {
+    this.http.get("http://localhost:5000/api/sharednotes/count", {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json"
+      })
+    }).subscribe(response => {
+      this.noteCountTotal = <number>response;
+    }, err => {
+      console.log(err)
+    });
+  }
+
+  readNotes() {
+    this.http.post("http://localhost:5000/api/sharednotes/list", {
+      "search": this.noteFilterForm.controls.title.value,
+      "sorting": (this.noteFilterForm.controls.sorting.value == "Ascending") ? 0 : 1,
+      "display": parseInt(this.notePaginationForm.controls.display.value),
+      "page": this.notePageSelected,
+    }, {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json"
+      })
+    }).subscribe(response => {
+      this.noteList = <Note[]>response;
+      this.noteCountDisplay = this.noteList.length
+    }, err => {
+      console.log(err)
+      this.noteList = [];
+    });
+  }
+
   searchNotes(page?: number) {
     page = (page === undefined) ? 0 : page
-
-    this.pageSelected = page;
+    this.notePageSelected = page;
 
     if (this.isUserAuthenticated()) {
-      // Get notes count with specified filters
-      this.http.post("http://localhost:5000/api/sharednotes/countFiltered", {
-        "search": this.searchForm.controls.notesSearch.value,
-        "sorting": (this.searchForm.controls.notesSorting.value == "Ascending") ? 0 : 1,
-      }, {
-        headers: new HttpHeaders({
-          "Content-Type": "application/json"
-        })
-      }).subscribe(response => {
-        this.itemsCount = <number>response;
-        this.pageCount = Math.ceil(this.itemsCount / parseInt(this.pageForm.controls.notesDisplay.value));
-      }, err => {
-        console.log(err)
-        this.itemsCount = 0;
-        this.pageCount = Math.ceil(this.itemsCount / parseInt(this.pageForm.controls.notesDisplay.value));
-      });
-
-      // Display required page with specified filters
-      this.http.post("http://localhost:5000/api/sharednotes/list", {
-        "search": this.searchForm.controls.notesSearch.value,
-        "sorting": (this.searchForm.controls.notesSorting.value == "Ascending") ? 0 : 1,
-        "display": parseInt(this.pageForm.controls.notesDisplay.value),
-        "page": this.pageSelected,
-      }, {
-        headers: new HttpHeaders({
-          "Content-Type": "application/json"
-        })
-      }).subscribe(response => {
-        this.items = Object.values(response);
-      }, err => {
-        console.log(err)
-        this.items = [];
-      });
+      this.readNotesCount();
+      this.readNotesCountTotal();
+      this.readNotes();
     }
   }
 
+  //Init
   ngOnInit(): void {
-    this.searchForm = this.formBuilder.group({
-      notesSearch: ['', []],
-      notesSorting: ['Ascending', [Validators.required]],
+    this.noteForm = this.formBuilder.group({
+      title: ['', [Validators.required]],
+      body: ['', [Validators.required]],
     });
-    this.pageForm = this.formBuilder.group({
-      notesDisplay: [10, [Validators.required, Validators.min(5), Validators.max(50)]],
+    this.noteFilterForm = this.formBuilder.group({
+      title: ['', []],
+      sorting: ['Ascending', [Validators.required]],
+    });
+    this.notePaginationForm = this.formBuilder.group({
+      display: [10, [Validators.required, Validators.min(5), Validators.max(50)]],
     });
 
-    this.searchNotes(0);
+    this.searchNotes();
   }
-
 }

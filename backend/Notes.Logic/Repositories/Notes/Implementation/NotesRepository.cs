@@ -54,7 +54,7 @@ namespace Notes.Logic.Repositories.Notes.Implementation
         #region Shared
         public async Task<ICollection<Note>> GetSharedNotes(int userId)
         {
-            var shares = _context.Sharing.Where(s => s.UserId == userId && s.Level >= SharingLevels.Level.Read);
+            var shares = _context.Shares.Where(s => s.UserId == userId && s.Level >= SharingLevels.Level.Read);
 
             var notes = new List<Note>();
             foreach (var share in shares)

@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Notes.Logic.Data;
 
-namespace NotesWebAPI.Migrations
+namespace Notes.Logic.Migrations
 {
     [DbContext(typeof(NotesWebAPIContext))]
-    [Migration("20200217120424_AddedNotes")]
-    partial class AddedNotes
+    [Migration("20200313054116_Initial-Migration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,7 +20,7 @@ namespace NotesWebAPI.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("NotesWebAPI.Models.Note", b =>
+            modelBuilder.Entity("Notes.Logic.Models.Database.Note", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -43,12 +43,33 @@ namespace NotesWebAPI.Migrations
                     b.ToTable("Notes");
                 });
 
-            modelBuilder.Entity("NotesWebAPI.Models.User", b =>
+            modelBuilder.Entity("Notes.Logic.Models.Database.Share", b =>
+                {
+                    b.Property<int>("NoteId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("int");
+
+                    b.HasKey("NoteId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Shares");
+                });
+
+            modelBuilder.Entity("Notes.Logic.Models.Database.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("IsSystem")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
@@ -63,11 +84,34 @@ namespace NotesWebAPI.Migrations
                         .HasFilter("[Username] IS NOT NULL");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            IsSystem = true,
+                            Username = "public"
+                        });
                 });
 
-            modelBuilder.Entity("NotesWebAPI.Models.Note", b =>
+            modelBuilder.Entity("Notes.Logic.Models.Database.Note", b =>
                 {
-                    b.HasOne("NotesWebAPI.Models.User", "User")
+                    b.HasOne("Notes.Logic.Models.Database.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Notes.Logic.Models.Database.Share", b =>
+                {
+                    b.HasOne("Notes.Logic.Models.Database.Note", "Note")
+                        .WithMany()
+                        .HasForeignKey("NoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Notes.Logic.Models.Database.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

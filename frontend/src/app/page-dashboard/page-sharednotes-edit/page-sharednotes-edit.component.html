@@ -1,25 +1,30 @@
-<main role="main" class="container-fluid">
+<main role="main" class="container">
   <div class="d-flex flex-column align-items-center" style="height: 100%;">
     <div class="my-auto text-center p-2 col-xs-12 col-sm-8" style="flex: none;">
-      <form [formGroup]="updateForm" (ngSubmit)="updateNote()" novalidate>
+      <div class="alert alert-success" role="alert" *ngIf="noteUpdateSuccess">
+        Successfully updated shared note!
+      </div>
+      <div class="alert alert-danger" role="alert" *ngIf="noteUpdateFail">
+        Failed to update shared note! {{noteUpdateFailString}}
+      </div>
+      <form [formGroup]="noteForm" (ngSubmit)="updateNote()" novalidate>
         <div class="form-group">
           <label for="noteTitle">Title</label>
-          <input type="text" class="form-control" id="noteTitle" formControlName="title" [readonly]="!canEdit" [ngClass]="{
-            'is-invalid': canEdit && updateForm.controls.title.invalid && (updateForm.controls.title.dirty || updateForm.controls.title.touched),
-            'is-valid': canEdit && updateForm.controls.title.valid && (updateForm.controls.title.dirty || updateForm.controls.title.touched)
+          <input type="text" class="form-control" id="noteTitle" formControlName="title" [ngClass]="{
+            'is-invalid': noteForm.controls.title.invalid && (noteForm.controls.title.dirty || noteForm.controls.title.touched),
+            'is-valid': noteForm.controls.title.valid && (noteForm.controls.title.dirty || noteForm.controls.title.touched)
           }">
         </div>
         <div class="form-group">
           <label for="noteBody">Body</label>
-          <textarea id="noteBody" class="form-control" rows="6" formControlName="body" [readonly]="!canEdit" [ngClass]="{
-            'is-invalid': canEdit && updateForm.controls.body.invalid && (updateForm.controls.body.dirty || updateForm.controls.body.touched),
-            'is-valid': canEdit && updateForm.controls.body.valid && (updateForm.controls.body.dirty || updateForm.controls.body.touched)
+          <textarea id="noteBody" class="form-control" rows="6" formControlName="body" [ngClass]="{
+            'is-invalid': noteForm.controls.body.invalid && (noteForm.controls.body.dirty || noteForm.controls.body.touched),
+            'is-valid': noteForm.controls.body.valid && (noteForm.controls.body.dirty || noteForm.controls.body.touched)
           }"></textarea>
         </div>
-        <div class="btn-group btn-block" role="group">
-          <button *ngIf="canEdit" type="submit" class="btn btn-primary" [disabled]="!updateForm.valid"><i class="fas fa-save"></i> Save</button>
-          <a *ngIf="canEdit" class="btn btn-secondary" href="dashboard/sharednotes" role="button"><i class="fas fa-times"></i> Cancel</a>
-          <a *ngIf="!canEdit" class="btn btn-secondary" href="dashboard/sharednotes" role="button"><i class="fas fa-arrow-left"></i> Go Back</a>
+        <div class="btn-group btn-block">
+          <a class="btn btn-dark" href="sharednotes" role="button"><i class="fas fa-arrow-left"></i> Cancel</a>
+          <button type="submit" class="btn btn-primary" [disabled]="!noteForm.valid || !noteCanEdit"><i class="fas fa-save"></i> Save</button>
         </div>
       </form>
     </div>

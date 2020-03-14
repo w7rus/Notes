@@ -9,6 +9,5 @@ namespace NotesWebAPI.Models.View.Request
         public string Title { get; set; }
         [Required]
         public string Body { get; set; }
-        public IEnumerable<SharingData> SharedUsersData { get; set; }
     }
 }

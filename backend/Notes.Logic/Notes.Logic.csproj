@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200217112559_Initial.cs" />
+    <Compile Remove="Migrations\20200217112559_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20200217113726_MadeUsernameUnique.cs" />
+    <Compile Remove="Migrations\20200217113726_MadeUsernameUnique.Designer.cs" />
+    <Compile Remove="Migrations\20200217120424_AddedNotes.cs" />
+    <Compile Remove="Migrations\20200217120424_AddedNotes.Designer.cs" />
     <Compile Remove="Migrations\20200303082207_SharingProperties.cs" />
     <Compile Remove="Migrations\20200303082207_SharingProperties.Designer.cs" />
     <Compile Remove="Migrations\20200303082519_SharingProperties.cs" />
@@ -33,6 +39,8 @@
     <Compile Remove="Migrations\20200305093005_SharingProperties.Designer.cs" />
     <Compile Remove="Migrations\20200305094309_SharingPropertiesOnDelete.cs" />
     <Compile Remove="Migrations\20200305094309_SharingPropertiesOnDelete.Designer.cs" />
+    <Compile Remove="Migrations\20200305094726_SharingProperties.cs" />
+    <Compile Remove="Migrations\20200305094726_SharingProperties.Designer.cs" />
     <Compile Remove="Migrations\20200306085343_ChangeDeleteBehavior.cs" />
     <Compile Remove="Migrations\20200306085343_ChangeDeleteBehavior.Designer.cs" />
     <Compile Remove="Migrations\20200306085700_ChangeDeleteBehavior.cs" />
@@ -43,6 +51,18 @@
     <Compile Remove="Migrations\20200306090030_ChangeDeleteBehavior.Designer.cs" />
     <Compile Remove="Migrations\20200306090330_ChangeDeleteBehavior.cs" />
     <Compile Remove="Migrations\20200306090330_ChangeDeleteBehavior.Designer.cs" />
+    <Compile Remove="Migrations\20200313051342_FixShareTable.cs" />
+    <Compile Remove="Migrations\20200313051342_FixShareTable.Designer.cs" />
+    <Compile Remove="Migrations\20200313051436_FixShareTable.cs" />
+    <Compile Remove="Migrations\20200313051436_FixShareTable.Designer.cs" />
+    <Compile Remove="Migrations\20200313052037_FixShareTable.cs" />
+    <Compile Remove="Migrations\20200313052037_FixShareTable.Designer.cs" />
+    <Compile Remove="Migrations\20200313052712_FixShareTable.cs" />
+    <Compile Remove="Migrations\20200313052712_FixShareTable.Designer.cs" />
+    <Compile Remove="Migrations\20200313053329_FixShareTable.cs" />
+    <Compile Remove="Migrations\20200313053329_FixShareTable.Designer.cs" />
+    <Compile Remove="Migrations\20200313053825_FixShareTable2.cs" />
+    <Compile Remove="Migrations\20200313053825_FixShareTable2.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

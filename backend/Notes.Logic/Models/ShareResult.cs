@@ -7,12 +7,10 @@ using Notes.Logic.Common;
 
 namespace NotesWebAPI.Models.View.Request
 {
-    public class SharingData
+    public class ShareResult
     {
         public string Username { get; set; }
-        [Required]
         public int UserId { get; set; }
-        [Required]
         public SharingLevels.Level Level { get; set; }
     }
 }

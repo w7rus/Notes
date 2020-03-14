@@ -13,5 +13,7 @@ namespace Notes.Logic.Services.Users
         public Task<int> GetUserIdByUsername(string username);
         public Task<ICollection<User>> ListUsers();
         public Task<ICollection<User>> ListUsers(string search, int sorting, int display, int page);
+        public Task<int> GetUserCount();
+        public Task<int> GetUserCount(string search);
     }
 }

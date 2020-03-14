@@ -10,6 +10,5 @@ namespace Notes.Logic.Models
         public int Id { get; set; }
         public string Title { get; set; }
         public string Body { get; set; }
-        public IEnumerable<SharingData> SharedUsersData { get; set; }
     }
 }

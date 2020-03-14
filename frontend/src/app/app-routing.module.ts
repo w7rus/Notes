@@ -15,6 +15,7 @@ import { PageNotesListComponent } from './page-dashboard/page-notes-list/page-no
 import { PageNotesEditComponent } from './page-dashboard/page-notes-edit/page-notes-edit.component';
 import { PageSharednotesListComponent } from './page-dashboard/page-sharednotes-list/page-sharednotes-list.component';
 import { PageSharednotesEditComponent } from './page-dashboard/page-sharednotes-edit/page-sharednotes-edit.component';
+import { PageNotesNewComponent } from './page-dashboard/page-notes-new/page-notes-new.component';
 
 const routes: Routes = [
   {
@@ -44,22 +45,27 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
-    path: 'dashboard/notes',
+    path: 'notes',
     component: PageNotesListComponent,
     canActivate: [AuthGuard]
   },
   {
-    path: 'dashboard/notes/:id',
+    path: 'notes/new',
+    component: PageNotesNewComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'notes/edit/:id',
     component: PageNotesEditComponent,
     canActivate: [AuthGuard]
   },
   {
-    path: 'dashboard/sharednotes',
+    path: 'sharednotes',
     component: PageSharednotesListComponent,
     canActivate: [AuthGuard]
   },
   {
-    path: 'dashboard/sharednotes/:id',
+    path: 'sharednotes/edit/:id',
     component: PageSharednotesEditComponent,
     canActivate: [AuthGuard]
   },

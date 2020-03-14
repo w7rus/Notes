@@ -59,7 +59,7 @@ namespace Notes.Logic.Services.Notes.Implementation
             return await _notesRepository.GetNote(noteId);
         }
 
-        public async Task<Note> AddNote(string title, string body, int userId, IEnumerable<SharingData> sharingUsersData)
+        public async Task<Note> AddNote(string title, string body, int userId)
         {
             var note = new Note
             {
@@ -68,13 +68,12 @@ namespace Notes.Logic.Services.Notes.Implementation
                 Body = body
             };
 
-            var addedNote = await _notesRepository.AddNote(note);
-            await _sharesService.AddShares(addedNote.Id, sharingUsersData);
+            await _notesRepository.AddNote(note);
 
             return note;
         }
 
-        public async Task UpdateNote(int noteId, string title, string body, int userId, IEnumerable<SharingData> sharingUsersData)
+        public async Task UpdateNote(int noteId, string title, string body, int userId)
         {
             var note = await _notesRepository.GetNote(noteId);
 
@@ -82,13 +81,12 @@ namespace Notes.Logic.Services.Notes.Implementation
                 throw new ArgumentException($"Note[{noteId}] does not exists!");
 
             if (note.UserId != userId)
-                throw new InvalidOperationException($"User[{userId}] does not have permissions to operate with note[{note.UserId}]");
+                throw new InvalidOperationException($"User[{userId}] does not have permissions to operate with note[{note.Id}]");
 
             note.Title = title;
             note.Body = body;
 
             await _notesRepository.UpdateNote(note);
-            //await _sharesService.UpdateShares(noteId, sharingUsersData);
         }
 
         public async Task DeleteNote(int noteId, int userId)
@@ -99,7 +97,7 @@ namespace Notes.Logic.Services.Notes.Implementation
                 throw new ArgumentException($"Note[{noteId}] does not exists!");
 
             if (note.UserId != userId)
-                throw new InvalidOperationException($"User[{userId}] does not have permissions to operate with note[{note.UserId}]");
+                throw new InvalidOperationException($"User[{userId}] does not have permissions to operate with note[{note.Id}]");
 
             await _sharesService.DeleteShares(noteId);
             await _notesRepository.DeleteNote(note);
@@ -160,7 +158,7 @@ namespace Notes.Logic.Services.Notes.Implementation
             return await _notesRepository.GetSharedNote(noteId);
         }
 
-        public async Task UpdateSharedNote(int noteId, string title, string body, int userId, IEnumerable<SharingData> sharingUsersData)
+        public async Task UpdateSharedNote(int noteId, string title, string body, int userId)
         {
             var note = await _notesRepository.GetSharedNote(noteId);
 
@@ -172,10 +170,10 @@ namespace Notes.Logic.Services.Notes.Implementation
             var sharedUserData = sharedUsersData.FirstOrDefault(s => s.UserId == userId);
 
             if (sharedUserData == null)
-                throw new InvalidOperationException($"User[{userId}] does not have permissions to operate with note[{note.UserId}]");
+                throw new InvalidOperationException($"User[{userId}] does not have permissions to operate with note[{note.Id}]");
 
             if (sharedUserData.Level < SharingLevels.Level.ReadWrite)
-                throw new InvalidOperationException($"User[{userId}] does not have READWRITE permissions to operate with note[{note.UserId}]");
+                throw new InvalidOperationException($"User[{userId}] does not have READWRITE permissions to operate with note[{note.Id}]");
 
             note.Title = title;
             note.Body = body;

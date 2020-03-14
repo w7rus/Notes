@@ -27,15 +27,15 @@ namespace Notes.Logic.Data
                 });
             });
 
-            builder.Entity<SharingProps>(i =>
+            builder.Entity<Share>(i =>
             {
                 i.HasOne(a => a.Note)
                     .WithMany()
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.NoAction);
 
                 i.HasOne(a => a.User)
                     .WithMany()
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.NoAction);
 
                 i.HasKey(s => new
                 {
@@ -61,6 +61,6 @@ namespace Notes.Logic.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Note> Notes { get; set; }
-        public DbSet<SharingProps> Sharing { get; set; }
+        public DbSet<Share> Shares { get; set; }
     }
 }

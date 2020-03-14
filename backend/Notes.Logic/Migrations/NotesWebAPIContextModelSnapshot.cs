@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Notes.Logic.Data;
 
-namespace NotesWebAPI.Migrations
+namespace Notes.Logic.Migrations
 {
     [DbContext(typeof(NotesWebAPIContext))]
     partial class NotesWebAPIContextModelSnapshot : ModelSnapshot
@@ -41,15 +41,12 @@ namespace NotesWebAPI.Migrations
                     b.ToTable("Notes");
                 });
 
-            modelBuilder.Entity("Notes.Logic.Models.Database.SharingProps", b =>
+            modelBuilder.Entity("Notes.Logic.Models.Database.Share", b =>
                 {
                     b.Property<int>("NoteId")
                         .HasColumnType("int");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Id")
                         .HasColumnType("int");
 
                     b.Property<int>("Level")
@@ -59,7 +56,7 @@ namespace NotesWebAPI.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Sharing");
+                    b.ToTable("Shares");
                 });
 
             modelBuilder.Entity("Notes.Logic.Models.Database.User", b =>
@@ -104,18 +101,18 @@ namespace NotesWebAPI.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Notes.Logic.Models.Database.SharingProps", b =>
+            modelBuilder.Entity("Notes.Logic.Models.Database.Share", b =>
                 {
                     b.HasOne("Notes.Logic.Models.Database.Note", "Note")
                         .WithMany()
                         .HasForeignKey("NoteId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Notes.Logic.Models.Database.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

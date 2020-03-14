@@ -8,9 +8,8 @@ using Notes.Logic.Common;
 
 namespace Notes.Logic.Models.Database
 {
-    public class SharingProps
+    public class Share
     {
-        public int Id { get; set; }
         public int UserId { get; set; }
         public User User { get; set; }
         public int NoteId { get; set; }

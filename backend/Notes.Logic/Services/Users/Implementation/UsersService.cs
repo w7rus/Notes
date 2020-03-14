@@ -110,5 +110,23 @@ namespace Notes.Logic.Services.Users.Implementation
 
             return users.ToArray();
         }
+
+        public async Task<int> GetUserCount()
+        {
+            return (await _usersRepository.GetUsers()).Count();
+        }
+
+        public async Task<int> GetUserCount(string search)
+        {
+            IEnumerable<User> users = await _usersRepository.GetUsers();
+
+            //Search
+
+            if (!string.IsNullOrEmpty(search))
+                users = users.Where(n => n.Username.Contains(search));
+
+            return users.ToArray().Count();
+        }
+
     }
 }

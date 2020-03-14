@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Notes.Logic.Common;
@@ -18,66 +19,20 @@ namespace Notes.Logic.Services.Shares.Implementation
             _sharesRepository = sharesRepository;
         }
 
-        public ICollection<SharingProps> GetShares(int noteId)
+        public ICollection<Share> GetShares(int noteId)
         {
             return _sharesRepository.GetShares(noteId);
         }
 
-        public async Task AddShares(int noteId, IEnumerable<SharingData> sharedUsersData)
+        public ICollection<Share> GetShares(int noteId, int display, int page)
         {
-            if (sharedUsersData != null)
-            {
-                List<SharingProps> sharesToAdd = new List<SharingProps>();
+            IEnumerable<Share> shares = _sharesRepository.GetShares(noteId).ToList();
 
-                foreach (var sharingData in sharedUsersData)
-                {
-                    sharesToAdd.Add(new SharingProps()
-                    {
-                        Level = sharingData.Level,
-                        NoteId = noteId,
-                        UserId = sharingData.UserId
-                    });
-                }
+            //Pagination
 
-                await _sharesRepository.AddShares(sharesToAdd);
-            }
-        }
+            shares = shares.Skip(display * (page)).Take(display);
 
-        public async Task UpdateShares(int noteId, IEnumerable<SharingData> sharedUsersData)
-        {
-            if (sharedUsersData != null)
-            {
-                List<SharingProps> shares = new List<SharingProps>();
-                shares.AddRange(_sharesRepository.GetShares(noteId));
-
-                List<SharingProps> sharesToAdd = new List<SharingProps>();
-                List<SharingProps> sharesToUpdate = new List<SharingProps>();
-
-                foreach (var sharingData in sharedUsersData)
-                {
-                    var share = await _sharesRepository.GetShare(noteId, sharingData.UserId);
-
-                    if (share == null)
-                    {
-                        sharesToAdd.Add(new SharingProps()
-                        {
-                            Level = sharingData.Level,
-                            NoteId = noteId,
-                            UserId = sharingData.UserId
-                        });
-                    }
-                    else
-                    {
-                        share.Level = sharingData.Level;
-                        sharesToUpdate.Add(share);
-                        shares.Remove(share);
-                    }
-                }
-
-                await _sharesRepository.AddShares(sharesToAdd);
-                await _sharesRepository.UpdateShares(sharesToUpdate);
-                await _sharesRepository.DeleteShares(shares);
-            }
+            return shares.ToArray();
         }
 
         public async Task DeleteShares(int noteId)
@@ -88,6 +43,29 @@ namespace Notes.Logic.Services.Shares.Implementation
                 return;
 
             await _sharesRepository.DeleteShares(shares);
+        }
+
+        public async Task AddShare(int noteId, int userId, SharingLevels.Level level)
+        {
+            await _sharesRepository.AddShare(new Share
+            {
+                NoteId = noteId,
+                UserId = userId,
+                Level = level,
+            });
+        }
+
+        public async Task UpdateShare(int noteId, int userId, SharingLevels.Level level)
+        {
+            var share = await _sharesRepository.GetShare(noteId, userId);
+            share.Level = level;
+            await _sharesRepository.UpdateShare(share);
+        }
+
+        public async Task DeleteShare(int noteId, int userId)
+        {
+            var share = await _sharesRepository.GetShare(noteId, userId);
+            await _sharesRepository.DeleteShare(share);
         }
     }
 }

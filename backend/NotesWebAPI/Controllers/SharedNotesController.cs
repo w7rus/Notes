@@ -23,124 +23,14 @@ namespace NotesWebAPI.Controllers
     {
         private readonly INotesService _notesService;
         private readonly ISharesService _sharesService;
-        private readonly IUsersService _usersService;
 
-        public SharedNotesController(INotesService notesService
-            , ISharesService sharesService
-            , IUsersService usersService
-        )
+        public SharedNotesController(INotesService notesService, ISharesService sharesService)
         {
             _notesService = notesService;
             _sharesService = sharesService;
-            _usersService = usersService;
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpGet]
-        public async Task<ActionResult<ICollection<NoteResult>>> SharedNoteList()
-        {
-            try
-            {
-                if (!TryGetUserId(out var userId))
-                {
-                    Log.Warning($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Required field \"user_id\" is not found in JWT from");
-                    return Unauthorized();
-                }
-
-                var notes = (await _notesService.ListSharedNotes(userId)).ToList();
-
-                Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Sending {notes.Count()} shared notes[{string.Join(", ", notes.Select(n => n.Id))}] to user[{userId}]");
-
-                //return new ActionResult<IEnumerable<NoteResult>>(notes.Select(n =>
-                //    new NoteResult
-                //    {
-                //        Body = n.Body,
-                //        Id = n.Id,
-                //        Title = n.Title,
-                //        SharedUsersData = _sharesService.GetShares(n.Id).Where(s => s.UserId == userId).Select(s => new SharingData()
-                //        {
-                //            Level = s.Level,
-                //            UserId = s.UserId,
-                //            Username = s.User.Username//_usersService.GetUsernameByUserId(s.UserId) 
-                //        })
-                //    }
-                //));
-
-                return Ok(notes.Select(n =>
-                    new NoteResult
-                    {
-                        Body = n.Body,
-                        Id = n.Id,
-                        Title = n.Title,
-                        SharedUsersData = _sharesService.GetShares(n.Id).Where(s => s.UserId == userId).Select(s => new SharingData()
-                        {
-                            Level = s.Level,
-                            UserId = s.UserId,
-                            Username = _usersService.GetUsernameByUserId(s.UserId).Result
-                        }).ToArray()
-                    }
-                ).ToArray());
-            }
-            catch (Exception e)
-            {
-                Log.Error(e, $"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] " + e.Message);
-                return BadRequest(e.Message);
-            }
-        }
-
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpPost("list")]
-        public async Task<ActionResult<ICollection<NoteResult>>> SharedNoteListFiltered([Required][FromBody] DashboardNoteFilterRequest model)
-        {
-            try
-            {
-                if (!TryGetUserId(out var userId))
-                {
-                    Log.Warning($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Required field \"user_id\" is not found in JWT from");
-                    return Unauthorized();
-                }
-
-                var notes = (await _notesService.ListSharedNotes(userId, model.Search, model.Sorting, model.Display, model.Page)).ToList();
-
-                Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Sending {notes.Count()} shared notes[{string.Join(", ", notes.Select(n => n.Id))}] filters:[\"{model.Search}\", {model.Sorting}, {model.Display}, {model.Page}] to user[{userId}]");
-
-                //return new ActionResult<IEnumerable<NoteResult>>(notes.Select(n =>
-                //    new NoteResult
-                //    {
-                //        Body = n.Body,
-                //        Id = n.Id,
-                //        Title = n.Title,
-                //        SharedUsersData = _sharesService.GetShares(n.Id).Where(s => s.UserId == userId).Select(s => new SharingData()
-                //        {
-                //            Level = s.Level,
-                //            UserId = s.UserId,
-                //            Username = s.User.Username//_usersService.GetUsernameByUserId(s.UserId)
-                //        })
-                //    }
-                //));
-
-                return Ok(notes.Select(n =>
-                    new NoteResult
-                    {
-                        Body = n.Body,
-                        Id = n.Id,
-                        Title = n.Title,
-                        SharedUsersData = _sharesService.GetShares(n.Id).Where(s => s.UserId == userId).Select(s => new SharingData
-                        {
-                            Level = s.Level,
-                            UserId = s.UserId,
-                            Username = _usersService.GetUsernameByUserId(s.UserId).Result
-                        }).ToArray()
-                    }
-                ).ToArray());
-            }
-            catch (Exception e)
-            {
-                Log.Error(e, $"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] " + e.Message);
-                return BadRequest(e.Message);
-            }
-        }
-
+        //Read Shared Note
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{noteId}")]
         public async Task<ActionResult<NoteResult>> GetSharedNote([Required] int noteId)
@@ -173,30 +63,11 @@ namespace NotesWebAPI.Controllers
 
                 Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Sending shared note[{note.Id}] to user[{userId}]");
 
-                //return new NoteResult
-                //{
-                //    Body = note.Body,
-                //    Id = note.Id,
-                //    Title = note.Title,
-                //    SharedUsersData = _sharesService.GetShares(note.Id).Where(s => s.UserId == userId).Select(s => new SharingData()
-                //    {
-                //        Level = s.Level,
-                //        UserId = s.UserId,
-                //        Username = s.User.Username//_usersService.GetUsernameByUserId(s.UserId)
-                //    })
-                //};
-
                 return Ok(new NoteResult
                 {
                     Body = note.Body,
                     Id = note.Id,
-                    Title = note.Title,
-                    SharedUsersData = _sharesService.GetShares(note.Id).Where(s => s.UserId == userId).Select(s => new SharingData()
-                    {
-                        Level = s.Level,
-                        UserId = s.UserId,
-                        Username = _usersService.GetUsernameByUserId(s.UserId).Result
-                    }).ToArray()
+                    Title = note.Title
                 });
             }
             catch (Exception e)
@@ -206,9 +77,10 @@ namespace NotesWebAPI.Controllers
             }
         }
 
+        //Update Shared Note
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPut("{noteId}")]
-        public async Task<IActionResult> UpdateSharedNote([Required] int noteId, [Required][FromBody] DashboardNoteRequest model)
+        public async Task<ActionResult> UpdateSharedNote([Required] int noteId, [Required][FromBody] DashboardNoteRequest model)
         {
             try
             {
@@ -218,7 +90,7 @@ namespace NotesWebAPI.Controllers
                     return Unauthorized();
                 }
 
-                await _notesService.UpdateSharedNote(noteId, model.Title, model.Body, userId, model.SharedUsersData);
+                await _notesService.UpdateSharedNote(noteId, model.Title, model.Body, userId);
 
                 Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Successfully updated shared note[{noteId}] of user[{userId}]");
 
@@ -231,9 +103,76 @@ namespace NotesWebAPI.Controllers
             }
         }
 
+
+
+        //Other
+        // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        // [HttpGet]
+        // public async Task<ActionResult<ICollection<NoteResult>>> SharedNoteList()
+        // {
+        //     try
+        //     {
+        //         if (!TryGetUserId(out var userId))
+        //         {
+        //             Log.Warning($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Required field \"user_id\" is not found in JWT from");
+        //             return Unauthorized();
+        //         }
+        //
+        //         var notes = (await _notesService.ListSharedNotes(userId)).ToList();
+        //
+        //         Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Sending {notes.Count()} shared notes[{string.Join(", ", notes.Select(n => n.Id))}] to user[{userId}]");
+        //
+        //         return Ok(notes.Select(n =>
+        //             new NoteResult
+        //             {
+        //                 Body = n.Body,
+        //                 Id = n.Id,
+        //                 Title = n.Title
+        //             }
+        //         ).ToArray());
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         Log.Error(e, $"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] " + e.Message);
+        //         return BadRequest(e.Message);
+        //     }
+        // }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost("list")]
+        public async Task<ActionResult<ICollection<NoteResult>>> SharedNoteListFiltered([Required][FromBody] DashboardNoteFilterRequest model)
+        {
+            try
+            {
+                if (!TryGetUserId(out var userId))
+                {
+                    Log.Warning($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Required field \"user_id\" is not found in JWT from");
+                    return Unauthorized();
+                }
+
+                var notes = (await _notesService.ListSharedNotes(userId, model.Search, model.Sorting, model.Display, model.Page)).ToList();
+
+                Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Sending {notes.Count()} shared notes[{string.Join(", ", notes.Select(n => n.Id))}] filters:[\"{model.Search}\", {model.Sorting}, {model.Display}, {model.Page}] to user[{userId}]");
+
+                return Ok(notes.Select(n =>
+                    new NoteResult
+                    {
+                        Body = n.Body,
+                        Id = n.Id,
+                        Title = n.Title
+                    }
+                ).ToArray());
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, $"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] " + e.Message);
+                return BadRequest(e.Message);
+            }
+        }
+
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("count")]
-        public async Task<IActionResult> SharedNoteCount()
+        public async Task<ActionResult<int>> SharedNoteCount()
         {
             try
             {
@@ -258,7 +197,7 @@ namespace NotesWebAPI.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("countFiltered")]
-        public async Task<IActionResult> SharedNoteCountFiltered([Required] [FromBody] DashboardNoteFilterRequest model)
+        public async Task<ActionResult<int>> SharedNoteCountFiltered([Required] [FromBody] DashboardNoteFilterRequest model)
         {
             try
             {
