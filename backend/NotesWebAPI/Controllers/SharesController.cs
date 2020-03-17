@@ -285,7 +285,7 @@ namespace NotesWebAPI.Controllers
                     .ToList();
 
                 // Filter out users that are already in Shares
-                users = users.Where(u => shares.FirstOrDefault(s => s.UserId == u.Id) == null).ToList();
+                users = users.Where(u => shares.FirstOrDefault(s => s.UserId == u.Id) == null && u.Id != note.UserId && u.Id != 1).ToList();
 
                 Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Sending {users.Count()} users[{string.Join(", ", users.Select(n => n.Id))}] filters:[\"{model.Search}\", {model.Sorting}, {model.Display}, {model.Page}] to user[{userId}]");
 
@@ -371,7 +371,7 @@ namespace NotesWebAPI.Controllers
                     .ToList();
 
                 // Filter out users that are already in Shares
-                var count = users.Where(u => shares.FirstOrDefault(s => s.UserId == u.Id) == null).ToList().Count();
+                var count = users.Where(u => shares.FirstOrDefault(s => s.UserId == u.Id) == null && u.Id != note.UserId && u.Id != 1).ToList().Count();
 
                 Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Sending int[{count}] to user[{userId}]");
 
