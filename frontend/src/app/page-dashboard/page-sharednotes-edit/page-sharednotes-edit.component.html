@@ -1,4 +1,4 @@
-<main role="main" class="container">
+<!-- <main role="main" class="container">
   <div class="d-flex flex-column align-items-center" style="height: 100%;">
     <div class="my-auto text-center p-2 col-xs-12 col-sm-8" style="flex: none;">
       <div class="alert alert-success" role="alert" *ngIf="noteUpdateSuccess">
@@ -27,6 +27,59 @@
           <button type="submit" class="btn btn-primary" [disabled]="!noteForm.valid || !noteCanEdit"><i class="fas fa-save"></i> Save</button>
         </div>
       </form>
+    </div>
+  </div>
+</main> -->
+
+<main role="main" class="container">
+  <div class="d-flex flex-column align-items-center" style="height: 100%;">
+    <div class="my-auto p-2 col-xs-12 col-sm-8" style="flex: none;">
+      <div class="row">
+        <div class="col">
+          <div class="alert alert-success" role="alert" *ngIf="noteUpdateSuccess">
+            Successfully updated shared note!
+          </div>
+          <div class="alert alert-danger" role="alert" *ngIf="noteUpdateFail">
+            Failed to update shared note! {{noteUpdateFailString}}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="card my-3">
+            <div class="card-header">
+              <div class="row">
+                <div class="col text-left">
+                  <a class="btn btn-dark" href="sharednotes" role="button"><i class="fas fa-arrow-left"></i> Back</a>
+                </div>
+                <div class="col text-right">
+                  <div class="btn-group">
+                    <button class="btn btn-primary" [ngClass]="{'d-none': !noteCanEdit}" [disabled]="!noteForm.valid" (click)="updateNote()"><i class="fas fa-save"></i> Save</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <form [formGroup]="noteForm" (ngSubmit)="updateNote()" novalidate>
+                <div class="form-group">
+                  <label for="noteTitle">Title:</label>
+                  <input type="text" class="form-control" id="noteTitle" formControlName="title" [ngClass]="{
+                    'is-invalid': noteForm.controls.title.invalid && (noteForm.controls.title.dirty || noteForm.controls.title.touched),
+                    'is-valid': noteForm.controls.title.valid && (noteForm.controls.title.dirty || noteForm.controls.title.touched)
+                  }">
+                </div>
+                <div class="form-group">
+                  <label for="noteBody">Body:</label>
+                  <textarea id="noteBody" class="form-control" rows="6" formControlName="body" [ngClass]="{
+                    'is-invalid': noteForm.controls.body.invalid && (noteForm.controls.body.dirty || noteForm.controls.body.touched),
+                    'is-valid': noteForm.controls.body.valid && (noteForm.controls.body.dirty || noteForm.controls.body.touched)
+                  }"></textarea>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </main>

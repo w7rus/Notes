@@ -23,8 +23,8 @@ namespace NotesWebAPI.Extensions
             {
                 var context = serviceScope.ServiceProvider.GetService<T>();
 
-                //context.Database.EnsureCreated();
-                context.Database.Migrate();
+                context.Database.EnsureCreated();
+                //context.Database.Migrate();
             }
         }
     }
