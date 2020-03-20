@@ -47,6 +47,7 @@ export class PageNotesEditComponent implements OnInit {
   shareUpdateFailString: string = "";
 
   shareList: Share[];
+  sharePublic: Share;
   userList: User[];
 
   userCount: number = 0;
@@ -173,7 +174,27 @@ export class PageNotesEditComponent implements OnInit {
         "Content-Type": "application/json"
       })
     }).subscribe(response => {
-      this.shareList = <Share[]>response;
+      this.shareList = <Share[]>response
+      // let foundPublic: boolean = false;
+      // sharesListTemp.forEach((e) => {
+      //   if (e.userId == 1) {
+      //     foundPublic = true;
+      //     this.sharePublicLevel = e.level
+      //   }
+      // })
+
+      // sharesListTemp = sharesListTemp.filter((value) => {
+      //   return value.userId != 1;
+      // })
+      // this.shareList = sharesListTemp;
+
+      // if (foundPublic) {
+      //   this.shareCount = this.shareCount - 1
+      //   this.sharePageCount = Math.ceil(this.shareCount / parseInt(this.sharePaginationForm.controls.display.value));
+      // }
+
+      
+      // this.shareHasPublic = foundPublic;
     }, err => {
       console.log(err);
     });

@@ -16,6 +16,8 @@ import { PageNotesEditComponent } from './page-dashboard/page-notes-edit/page-no
 import { PageSharednotesListComponent } from './page-dashboard/page-sharednotes-list/page-sharednotes-list.component';
 import { PageSharednotesEditComponent } from './page-dashboard/page-sharednotes-edit/page-sharednotes-edit.component';
 import { PageNotesNewComponent } from './page-dashboard/page-notes-new/page-notes-new.component';
+import { PagePublicnotesEditComponent } from './page-publicnotes-edit/page-publicnotes-edit.component';
+import { PagePublicnotesListComponent } from './page-publicnotes-list/page-publicnotes-list.component';
 
 const routes: Routes = [
   {
@@ -68,6 +70,14 @@ const routes: Routes = [
     path: 'sharednotes/edit/:id',
     component: PageSharednotesEditComponent,
     canActivate: [AuthGuard]
+  },
+  {
+    path: 'publicnotes',
+    component: PagePublicnotesListComponent,
+  },
+  {
+    path: 'publicnotes/edit/:id',
+    component: PagePublicnotesEditComponent,
   },
   {
     path: 'not-found',

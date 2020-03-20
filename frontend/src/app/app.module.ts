@@ -17,6 +17,8 @@ import { PageNotesEditComponent } from './page-dashboard/page-notes-edit/page-no
 import { PageSharednotesListComponent } from './page-dashboard/page-sharednotes-list/page-sharednotes-list.component';
 import { PageSharednotesEditComponent } from './page-dashboard/page-sharednotes-edit/page-sharednotes-edit.component';
 import { PageNotesNewComponent } from './page-dashboard/page-notes-new/page-notes-new.component';
+import { PagePublicnotesListComponent } from './page-publicnotes-list/page-publicnotes-list.component';
+import { PagePublicnotesEditComponent } from './page-publicnotes-edit/page-publicnotes-edit.component';
 
 export function tokenGetter() {
   return localStorage.getItem("jwt");
@@ -32,7 +34,9 @@ export function tokenGetter() {
     PageNotesEditComponent,
     PageSharednotesListComponent,
     PageSharednotesEditComponent,
-    PageNotesNewComponent
+    PageNotesNewComponent,
+    PagePublicnotesListComponent,
+    PagePublicnotesEditComponent
   ],
   imports: [
     BrowserModule,

@@ -60,6 +60,8 @@ namespace NotesWebAPI.Controllers
 
                 var shares = _sharesService.GetShares(noteId).ToList();
 
+                shares = shares.Where(s => s.UserId != 1).ToList();
+
                 Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Sending {shares.Count()} shares[...] to user[{userId}]");
 
                 return Ok(shares.Select(s =>
@@ -99,6 +101,8 @@ namespace NotesWebAPI.Controllers
                 }
 
                 var shares = _sharesService.GetShares(noteId, modal.Display, modal.Page).ToList();
+
+                shares = shares.Where(s => s.UserId != 1).ToList();
 
                 Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Sending {shares.Count()} shares[...] to user[{userId}]");
 
