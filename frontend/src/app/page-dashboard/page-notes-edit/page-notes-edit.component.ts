@@ -175,26 +175,17 @@ export class PageNotesEditComponent implements OnInit {
       })
     }).subscribe(response => {
       this.shareList = <Share[]>response
-      // let foundPublic: boolean = false;
-      // sharesListTemp.forEach((e) => {
-      //   if (e.userId == 1) {
-      //     foundPublic = true;
-      //     this.sharePublicLevel = e.level
-      //   }
-      // })
+    }, err => {
+      console.log(err);
+    });
 
-      // sharesListTemp = sharesListTemp.filter((value) => {
-      //   return value.userId != 1;
-      // })
-      // this.shareList = sharesListTemp;
-
-      // if (foundPublic) {
-      //   this.shareCount = this.shareCount - 1
-      //   this.sharePageCount = Math.ceil(this.shareCount / parseInt(this.sharePaginationForm.controls.display.value));
-      // }
-
-      
-      // this.shareHasPublic = foundPublic;
+    // Get Shares for Note
+    this.http.get("http://localhost:5000/api/shares/findSharePublic/" + this.noteId,{
+      headers: new HttpHeaders({
+        "Content-Type": "application/json"
+      })
+    }).subscribe(response => {
+      this.sharePublic = <Share>response
     }, err => {
       console.log(err);
     });

@@ -109,23 +109,23 @@
                 </li>
               </ul>
             </nav>
-            <!-- <button class="btn btn-primary btn-block" (click)="addShare(1)"><i class="fas fa-plus"></i> Make Public</button>
             <p class="text-center my-2">Public Sharing</p>
-            <div class="btn-group btn-block" role="group">
+            <button class="btn btn-primary btn-block" (click)="addShare(1)" *ngIf="sharePublic.length == 0"><i class="fas fa-plus"></i> Make Public</button>
+            <div class="btn-group btn-block" role="group" *ngIf="sharePublic.length == 1">
               <button type="button" class="btn" [ngClass]="{
-                'btn-primary': sharePublicLevel == 0,
-                'btn-outline-primary': sharePublicLevel != 0
+                'btn-primary': sharePublic[0].level == 0,
+                'btn-outline-primary': sharePublic[0].level != 0
               }" (click)="updateShare(1, 0)">None</button>
               <button type="button" class="btn" [ngClass]="{
-                'btn-primary': sharePublicLevel == 1,
-                'btn-outline-primary': sharePublicLevel != 1
+                'btn-primary': sharePublic[0].level == 1,
+                'btn-outline-primary': sharePublic[0].level != 1
               }" (click)="updateShare(1, 1)">Read</button>
               <button type="button" class="btn" [ngClass]="{
-                'btn-primary': sharePublicLevel == 2,
-                'btn-outline-primary': sharePublicLevel != 2
+                'btn-primary': sharePublic[0].level == 2,
+                'btn-outline-primary': sharePublic[0].level != 2
               }"(click)="updateShare(1, 2)">Read/Write</button>
               <button class="btn btn-danger" (click)="deleteShare(1)"><i class="fas fa-trash"></i></button>
-            </div> -->
+            </div>
           </div>
           <div class="tab-pane fade" id="sharingModalUserList" role="tabpanel">
             <form class="my-3" [formGroup]="userFilterForm">

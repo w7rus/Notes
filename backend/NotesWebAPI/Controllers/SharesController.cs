@@ -102,7 +102,47 @@ namespace NotesWebAPI.Controllers
 
                 var shares = _sharesService.GetShares(noteId, modal.Display, modal.Page).ToList();
 
-                shares = shares.Where(s => s.UserId != 1).ToList();
+                Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Sending {shares.Count()} shares[...] to user[{userId}]");
+
+                return Ok(shares.Select(s =>
+                    new ShareResult
+                    {
+                        Username = _usersService.GetUsernameByUserId(s.UserId).Result,
+                        UserId = s.UserId,
+                        Level = s.Level
+                    }
+                ));
+            }
+            catch (Exception e)
+            {
+                LogError(e);
+                return BadRequest(e.Message);
+            }
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpGet("findSharePublic/{noteId}")]
+        public async Task<ActionResult<ShareResult>> GetSharePublic([Required] int noteId)
+        {
+            try
+            {
+                if (!TryGetUserId(out var userId))
+                {
+                    Log.Warning($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Required field \"user_id\" is not found in JWT from");
+                    return Unauthorized();
+                }
+
+                var note = await _notesService.GetNote(noteId);
+
+                if (note.UserId != userId)
+                {
+                    Log.Warning($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] User[{userId}] does not have permissions to operate with note[{note.UserId}]");
+                    return BadRequest();
+                }
+
+                var shares = _sharesService.GetShares(noteId).ToList();
+
+                shares = shares.Where(s => s.UserId == 1).ToList();
 
                 Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Sending {shares.Count()} shares[...] to user[{userId}]");
 
@@ -245,7 +285,11 @@ namespace NotesWebAPI.Controllers
                     return BadRequest();
                 }
 
-                var count = _sharesService.GetShares(noteId).ToList().Count;
+                var shares = _sharesService.GetShares(noteId).ToList();
+
+                shares = shares.Where(s => s.UserId != 1).ToList();
+
+                var count = shares.Count;
 
                 Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Sending {count} int to user[{userId}]");
 
@@ -387,6 +431,8 @@ namespace NotesWebAPI.Controllers
                 return BadRequest(e.Message);
             }
         }
+
+
 
         #region Helpers
         private void LogError(Exception e)

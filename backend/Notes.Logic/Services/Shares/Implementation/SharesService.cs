@@ -28,6 +28,8 @@ namespace Notes.Logic.Services.Shares.Implementation
         {
             IEnumerable<Share> shares = _sharesRepository.GetShares(noteId).ToList();
 
+            shares = shares.Where(s => s.UserId != 1);
+
             //Pagination
 
             shares = shares.Skip(display * (page)).Take(display);
