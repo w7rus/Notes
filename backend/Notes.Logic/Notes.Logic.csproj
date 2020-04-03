@@ -63,6 +63,10 @@
     <Compile Remove="Migrations\20200313053329_FixShareTable.Designer.cs" />
     <Compile Remove="Migrations\20200313053825_FixShareTable2.cs" />
     <Compile Remove="Migrations\20200313053825_FixShareTable2.Designer.cs" />
+    <Compile Remove="Migrations\20200403095507_Attachments.cs" />
+    <Compile Remove="Migrations\20200403095507_Attachments.Designer.cs" />
+    <Compile Remove="Migrations\20200403095828_Attachments.cs" />
+    <Compile Remove="Migrations\20200403095828_Attachments.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -71,6 +75,10 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.1" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.5.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\Images\" />
   </ItemGroup>
 
 </Project>

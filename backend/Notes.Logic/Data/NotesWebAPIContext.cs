@@ -44,6 +44,12 @@ namespace Notes.Logic.Data
                 });
             });
 
+            builder.Entity<Attachment>(i =>
+            {
+                i.HasIndex(a => a.Filename)
+                    .IsUnique();
+            });
+
             //builder.Entity<SharingProps>(i => { i.HasOne(x => x.Note).WithMany().OnDelete(DeleteBehavior.Restrict); })
             //    .HasData(new User
             //    {
@@ -62,5 +68,7 @@ namespace Notes.Logic.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Note> Notes { get; set; }
         public DbSet<Share> Shares { get; set; }
+
+        public DbSet<Attachment> Attachments { get; set; }
     }
 }
