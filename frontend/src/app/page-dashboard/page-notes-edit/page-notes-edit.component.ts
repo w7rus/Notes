@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Component, OnInit, Output } from '@angular/core';
+import { HttpClient, HttpHeaders, HttpEventType } from '@angular/common/http';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EventEmitter } from 'protractor';
 
 interface Share {
   username: string,
@@ -47,7 +48,7 @@ export class PageNotesEditComponent implements OnInit {
   shareUpdateFailString: string = "";
 
   shareList: Share[];
-  sharePublic: Share;
+  sharePublic: Share[];
   userList: User[];
 
   userCount: number = 0;
@@ -56,6 +57,9 @@ export class PageNotesEditComponent implements OnInit {
   shareCount: number = 0;
   sharePageSelected: number = 0;
   sharePageCount: number = 0;
+
+  attachmentUploadProgress: number;
+  attachmentUploadProgressString: string;
 
   constructor(
     private http: HttpClient,
@@ -185,7 +189,7 @@ export class PageNotesEditComponent implements OnInit {
         "Content-Type": "application/json"
       })
     }).subscribe(response => {
-      this.sharePublic = <Share>response
+      this.sharePublic = <Share[]>response
     }, err => {
       console.log(err);
     });
@@ -308,6 +312,35 @@ export class PageNotesEditComponent implements OnInit {
     }
   }
 
+  //Attachments
+  addAttachment(files) {
+    if (files.length === 0) {
+      return;
+    }
+
+    let fileToUpload = <File>files[0];
+    const formData = new FormData();
+    formData.append('file', fileToUpload);
+
+    this.http.post("http://localhost:5000/api/attachment/" + this.noteId, formData, {reportProgress: true, observe: 'events'}).subscribe(response => {
+      if (response.type === HttpEventType.UploadProgress)
+        this.attachmentUploadProgress = Math.round(100 * response.loaded / response.total);
+      else if (response.type === HttpEventType.Response) {
+        this.attachmentUploadProgressString = "Upload success.";
+      }
+    }, err => {
+      
+    });
+  }
+
+  readAttachment() {
+
+  }
+
+  removeAttachment() {
+
+  }
+
   //Init
   ngOnInit(): void {
     this.noteForm = this.formBuilder.group({
@@ -329,5 +362,7 @@ export class PageNotesEditComponent implements OnInit {
       this.readShares();
       this.searchShares();
     }
+
+    console.log(this.sharePublic)
   }
 }

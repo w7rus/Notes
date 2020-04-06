@@ -261,6 +261,20 @@
                   }"></textarea>
                 </div>
               </form>
+              <div class="row">
+                <div class="col-md-3">
+                  <input type="file" #file placeholder="Choose file" (change)="addAttachment(file.files)" style="display:none;">
+                  <button type="button" class="btn btn-success" (click)="file.click()">Upload File</button>
+                </div>
+                <div class="col-md-4">
+                  <span class="upload" *ngIf="attachmentUploadProgress > 0">
+                    {{attachmentUploadProgress}}%
+                  </span>
+                  <span class="upload" *ngIf="attachmentUploadProgressString">
+                    {{attachmentUploadProgressString}}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
