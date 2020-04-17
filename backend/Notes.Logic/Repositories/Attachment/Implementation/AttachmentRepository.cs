@@ -22,5 +22,10 @@ namespace Notes.Logic.Repositories.Attachment.Implementation
 
             return attachment;
         }
+
+        public async Task<Models.Database.Attachment> GetAttachment(int attachmentId)
+        {
+            return await _context.Attachments.FindAsync(attachmentId);
+        }
     }
 }

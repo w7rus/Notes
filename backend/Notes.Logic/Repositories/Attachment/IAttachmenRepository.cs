@@ -9,5 +9,6 @@ namespace Notes.Logic.Repositories.Attachment
     public interface IAttachmentRepository
     {
         public Task<Models.Database.Attachment> AddAttachment(Models.Database.Attachment attachment);
+        public Task<Models.Database.Attachment> GetAttachment(int attachmentId);
     }
 }

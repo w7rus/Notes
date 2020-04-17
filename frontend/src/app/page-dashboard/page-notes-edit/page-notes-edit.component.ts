@@ -58,8 +58,8 @@ export class PageNotesEditComponent implements OnInit {
   sharePageSelected: number = 0;
   sharePageCount: number = 0;
 
-  attachmentUploadProgress: number;
-  attachmentUploadProgressString: string;
+  attachmentUploadProgress: number = 0;
+  attachmentUploadProgressString: string = "Upload File";
 
   constructor(
     private http: HttpClient,
@@ -323,13 +323,14 @@ export class PageNotesEditComponent implements OnInit {
     formData.append('file', fileToUpload);
 
     this.http.post("http://localhost:5000/api/attachment/" + this.noteId, formData, {reportProgress: true, observe: 'events'}).subscribe(response => {
-      if (response.type === HttpEventType.UploadProgress)
+      if (response.type === HttpEventType.UploadProgress) {
         this.attachmentUploadProgress = Math.round(100 * response.loaded / response.total);
-      else if (response.type === HttpEventType.Response) {
-        this.attachmentUploadProgressString = "Upload success.";
+        this.attachmentUploadProgressString = "Uploading... " + this.attachmentUploadProgress
+      } else if (response.type === HttpEventType.Response) {
+        this.attachmentUploadProgressString = "Upload File";
       }
     }, err => {
-      
+      this.attachmentUploadProgressString = "Upload File";
     });
   }
 

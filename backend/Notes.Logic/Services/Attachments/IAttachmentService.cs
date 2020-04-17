@@ -9,6 +9,9 @@ namespace Notes.Logic.Services.Attachments
 {
     public interface IAttachmentService
     {
-        public Task<Attachment> AddAttachment(int noteId, byte[] fileData);
+        public Task<Attachment> AddAttachment(int noteId, byte[] fileData, string fileExtension);
+
+        public Task<Attachment> GetAttachment(int attachmentId);
+        public Task<byte[]> GetAttachmentFile(string fileName);
     }
 }

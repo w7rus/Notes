@@ -262,17 +262,9 @@
                 </div>
               </form>
               <div class="row">
-                <div class="col-md-3">
+                <div class="col">
                   <input type="file" #file placeholder="Choose file" (change)="addAttachment(file.files)" style="display:none;">
-                  <button type="button" class="btn btn-success" (click)="file.click()">Upload File</button>
-                </div>
-                <div class="col-md-4">
-                  <span class="upload" *ngIf="attachmentUploadProgress > 0">
-                    {{attachmentUploadProgress}}%
-                  </span>
-                  <span class="upload" *ngIf="attachmentUploadProgressString">
-                    {{attachmentUploadProgressString}}
-                  </span>
+                  <button type="button" class="btn btn-success" (click)="file.click()" [disabled]="attachmentUploadProgress > 0 && attachmentUploadProgress < 100">{{attachmentUploadProgressString}}</button>
                 </div>
               </div>
             </div>

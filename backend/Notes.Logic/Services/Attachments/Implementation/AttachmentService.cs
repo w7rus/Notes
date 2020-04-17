@@ -17,9 +17,9 @@ namespace Notes.Logic.Services.Attachments.Implementation
             _attachmentRepository = attachmentRepository;
         }
 
-        public async Task<Attachment> AddAttachment(int noteId, byte[] fileData)
+        public async Task<Attachment> AddAttachment(int noteId, byte[] fileData, string fileExtension)
         {
-            var fileName = Guid.NewGuid().ToString();
+            var fileName = Guid.NewGuid() + fileExtension;
             var fullPath = Path.Combine(Path.Combine("Resources", "Images"), fileName);
 
             await using var stream = new FileStream(fullPath, FileMode.Create);
@@ -34,6 +34,23 @@ namespace Notes.Logic.Services.Attachments.Implementation
             await _attachmentRepository.AddAttachment(attachment);
 
             return attachment;
+        }
+
+        public async Task<Attachment> GetAttachment(int attachmentId)
+        {
+            return await _attachmentRepository.GetAttachment(attachmentId);
+        }
+
+        public async Task<byte[]> GetAttachmentFile(string fileName)
+        {
+            var fullPath = Path.Combine(Path.Combine("Resources", "Images"), fileName);
+            await using var stream = new FileStream(fullPath, FileMode.Open);
+
+            var memory = new MemoryStream();
+            await stream.CopyToAsync(memory);
+            var data = memory.ToArray();
+
+            return data;
         }
     }
 }
