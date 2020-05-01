@@ -66,33 +66,35 @@ namespace NotesWebAPI.Controllers
         }
 
         //Read Attachment
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{attachmentId}")]
         public async Task<ActionResult> ReadAttachment([Required] int attachmentId)
         {
             try
             {
-                if (!TryGetUserId(out var userId))
-                {
-                    Log.Warning($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Required field \"user_id\" is not found in JWT from");
-                    return Unauthorized();
-                }
+                // if (!TryGetUserId(out var userId))
+                // {
+                //     Log.Warning($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Required field \"user_id\" is not found in JWT from");
+                //     return Unauthorized();
+                // }
 
                 var attachment = await _attachmentService.GetAttachment(attachmentId);
-                var note = await _notesService.GetNote(attachment.NoteId);
+                // var note = await _notesService.GetNote(attachment.NoteId);
+                //
+                // if (note.UserId != userId)
+                // {
+                //     Log.Warning($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] User[{userId}] does not have permissions to operate with note[{note.UserId}]");
+                //     return BadRequest();
+                // }
 
-                if (note.UserId != userId)
-                {
-                    Log.Warning($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] User[{userId}] does not have permissions to operate with note[{note.UserId}]");
-                    return BadRequest();
-                }
-
-                Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Sending attachment[{attachmentId}] of user[{userId}]");
+                Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Sending attachment[{attachmentId}] of user[]");
 
                 var fileData = await _attachmentService.GetAttachmentFile(attachment.Filename);
                 var stream = new MemoryStream(fileData);
 
                 Response.ContentType = new MediaTypeHeaderValue("application/octet-stream").ToString();
+
+                Console.WriteLine(attachment.Filename);
 
                 return new FileStreamResult(stream, "application/octet-stream")
                 {
@@ -106,7 +108,74 @@ namespace NotesWebAPI.Controllers
             }
         }
 
+        //List Attachments
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpGet("findAttachments/{noteId}")]
+        public async Task<ActionResult> GetAttachments([Required] int noteId)
+        {
+            try
+            {
+                if (!TryGetUserId(out var userId))
+                {
+                    Log.Warning($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Required field \"user_id\" is not found in JWT from");
+                    return Unauthorized();
+                }
+
+                var note = await _notesService.GetNote(noteId);
+
+                if (note.UserId != userId)
+                {
+                    Log.Warning($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] User[{userId}] does not have permissions to operate with note[{note.UserId}]");
+                    return BadRequest();
+                }
+
+                Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Sending attachments ids of note[{note.Id}]");
+
+                var ids = await _attachmentService.GetAttachmentList(noteId);
+
+                return Ok(ids);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, $"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] " + e.Message);
+                return BadRequest(e.Message);
+            }
+        }
+
         //Delete Attachment
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpDelete("{noteId}/{attachmentId}")]
+        public async Task<ActionResult> DeleteShare([Required] int noteId, [Required] int attachmentId)
+        {
+            try
+            {
+                if (!TryGetUserId(out var userId))
+                {
+                    Log.Warning($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Required field \"user_id\" is not found in JWT from");
+                    return Unauthorized();
+                }
+
+                var note = await _notesService.GetNote(noteId);
+
+                if (note.UserId != userId)
+                {
+                    Log.Warning($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] User[{userId}] does not have permissions to operate with note[{note.UserId}]");
+                    return BadRequest();
+                }
+
+                Log.Information($"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] Sending attachments ids of note[{note.Id}]");
+
+                await _attachmentService.DeleteAttachment(attachmentId);
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, $"[{Request.Path}:{Request.Method}/{HttpContext.Connection.RemoteIpAddress}] " + e.Message);
+                return BadRequest(e.Message);
+            }
+        }
+
 
         #region Helpers
 

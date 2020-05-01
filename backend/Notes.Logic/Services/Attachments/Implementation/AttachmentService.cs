@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Notes.Logic.Models;
 using Notes.Logic.Models.Database;
 using Notes.Logic.Repositories.Attachment;
 
@@ -51,6 +52,44 @@ namespace Notes.Logic.Services.Attachments.Implementation
             var data = memory.ToArray();
 
             return data;
+        }
+
+        public async Task<ICollection<AttachmentResult>> GetAttachmentList(int noteId)
+        {
+            return await _attachmentRepository.GetAttachmentsList(noteId);
+        }
+
+        public async Task DeleteAttachment(int attachmentId)
+        {
+            var attachment = await _attachmentRepository.GetAttachment(attachmentId);
+            var fullPath = Path.Combine(Path.Combine("Resources", "Images"), attachment.Filename);
+            
+            await _attachmentRepository.DeleteAttachment(attachment);
+            File.Delete(fullPath);
+        }
+
+        public ICollection<Attachment> GetAttachments(int noteId)
+        {
+            return _attachmentRepository.GetAttachments(noteId);
+        }
+
+        public async Task DeleteAttachmentsForNote(int noteId)
+        {
+            var attachments = GetAttachments(noteId);
+
+            Console.WriteLine(attachments.Count);
+
+            if (attachments == null)
+                return;
+
+            foreach (var attachment in attachments)
+            {
+                var fullPath = Path.Combine(Path.Combine("Resources", "Images"), attachment.Filename);
+                
+                File.Delete(fullPath);
+            }
+
+            await _attachmentRepository.DeleteAttachments(attachments);
         }
     }
 }

@@ -22,6 +22,11 @@ interface User {
   username: string,
 }
 
+interface Attachment {
+  id: number,
+  filename: string
+}
+
 @Component({
   selector: 'app-page-notes-edit',
   templateUrl: './page-notes-edit.component.html',
@@ -47,9 +52,9 @@ export class PageNotesEditComponent implements OnInit {
   shareUpdateFail: boolean = false;
   shareUpdateFailString: string = "";
 
-  shareList: Share[];
-  sharePublic: Share[];
-  userList: User[];
+  shareList: Share[] = [];
+  sharePublic: Share[] = [];
+  userList: User[] = [];
 
   userCount: number = 0;
   userPageSelected: number = 0;
@@ -58,6 +63,12 @@ export class PageNotesEditComponent implements OnInit {
   sharePageSelected: number = 0;
   sharePageCount: number = 0;
 
+  attachmentList: Attachment[];
+  attachmentListCount: number = 0;
+  attachmentUploadSuccess = false;
+  attachmentUploadSuccessString = "";
+  attachmentUploadFail = false;
+  attachmentUploadFailString = "";
   attachmentUploadProgress: number = 0;
   attachmentUploadProgressString: string = "Upload File";
 
@@ -328,18 +339,83 @@ export class PageNotesEditComponent implements OnInit {
         this.attachmentUploadProgressString = "Uploading... " + this.attachmentUploadProgress
       } else if (response.type === HttpEventType.Response) {
         this.attachmentUploadProgressString = "Upload File";
+        this.attachmentUploadSuccess = true;
+        setTimeout(() => {
+          this.attachmentUploadSuccess = false;
+        }, 5000);
+        this.listAttachments();
       }
     }, err => {
+      this.attachmentUploadSuccess = true;
+      this.attachmentUploadFail = true;
+      this.attachmentUploadFailString = err.error;
+      setTimeout(() => {
+        this.attachmentUploadFail = false;
+        this.attachmentUploadFailString = "";
+      }, 5000);
       this.attachmentUploadProgressString = "Upload File";
     });
   }
 
-  readAttachment() {
-
+  listAttachments() {
+    // Get Attachment
+    this.http.get("http://localhost:5000/api/attachment/findAttachments/" + this.noteId, {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json"
+      })
+    }).subscribe(response => {
+      this.attachmentList = <Attachment[]>response;
+      this.attachmentListCount = this.attachmentList.length
+      console.log(this.attachmentListCount)
+    }, err => {
+      console.log(err);
+    });
   }
 
-  removeAttachment() {
+  // downLoadFile(data: any, type: string) {
+  //   let blob = new Blob([data], {type: type});
+  //   let url = window.URL.createObjectURL(blob);
+  //   let pwa = window.open(url);
+  //   if (!pwa || pwa.closed || typeof pwa.closed == 'undefined') {
+  //       alert( 'Please disable your Pop-up blocker and try again.');
+  //   }
+  // }
+  readAttachment(attachmentid: number) {
+    window.open("http://localhost:5000/api/attachment/" + attachmentid)
 
+    // this.http.get("http://localhost:5000/api/attachment/" + attachmentid, {
+    //   responseType: 'arraybuffer',
+    //   headers: new HttpHeaders({})
+    // }).subscribe(response => {
+    //   this.downLoadFile(response, "image/jpeg")
+    // });
+
+    // Get Attachment
+    // this.http.get("http://localhost:5000/api/attachment/" + attachmentid, {
+    //   headers: new HttpHeaders({
+    //     "Content-Type": "application/json"
+    //   })
+    // }).subscribe(response => {
+    //   //this.downLoadFile(response, "application/octet-stream")
+    //   console.log(response)
+    // }, err => {
+    //   console.log(err);
+    // });
+  }
+
+  removeAttachment(attachmentid: number) {
+    console.log("removed attachment" + attachmentid)
+
+    // Get Shares for Note
+    this.http.delete("http://localhost:5000/api/attachment/" + this.noteId + "/" + attachmentid, {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json"
+      })
+    }).subscribe(response => {
+      this.listAttachments();
+    }, err => {
+      console.log(err);
+    });
   }
 
   //Init
@@ -362,8 +438,7 @@ export class PageNotesEditComponent implements OnInit {
       this.readNote();
       this.readShares();
       this.searchShares();
+      this.listAttachments();
     }
-
-    console.log(this.sharePublic)
   }
 }

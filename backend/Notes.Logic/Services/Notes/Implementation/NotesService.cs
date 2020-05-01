@@ -6,6 +6,7 @@ using Notes.Logic.Common;
 using Notes.Logic.Models.Database;
 using Notes.Logic.Repositories.Notes;
 using Notes.Logic.Repositories.Shares;
+using Notes.Logic.Services.Attachments;
 using Notes.Logic.Services.Shares;
 using NotesWebAPI.Models.View.Request;
 
@@ -15,11 +16,13 @@ namespace Notes.Logic.Services.Notes.Implementation
     {
         private readonly INotesRepository _notesRepository;
         private readonly ISharesService _sharesService;
+        private readonly IAttachmentService _attachmentService;
 
-        public NotesService(INotesRepository notesRepository, ISharesService sharesService)
+        public NotesService(INotesRepository notesRepository, ISharesService sharesService, IAttachmentService attachmentService)
         {
             _notesRepository = notesRepository;
             _sharesService = sharesService;
+            _attachmentService = attachmentService;
         }
 
         #region nonShared
@@ -100,6 +103,7 @@ namespace Notes.Logic.Services.Notes.Implementation
                 throw new InvalidOperationException($"User[{userId}] does not have permissions to operate with note[{note.Id}]");
 
             await _sharesService.DeleteShares(noteId);
+            await _attachmentService.DeleteAttachmentsForNote(noteId);
             await _notesRepository.DeleteNote(note);
         }
 

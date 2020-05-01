@@ -215,6 +215,63 @@
   </div>
 </div>
 
+<div class="modal fade" id="attachmentsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="attachmentsModalLabel">Attachments</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-success" role="alert" *ngIf="attachmentUploadSuccess">
+          Successfully uploaded attachment for note!
+        </div>
+        <div class="alert alert-danger" role="alert" *ngIf="attachmentUploadFail">
+          Failed to upload attachment for note! {{attachmentUploadFailString}}
+        </div>
+        <div class="row">
+          <div class="col">
+            <input type="file" #file placeholder="Choose file" (change)="addAttachment(file.files)" style="display:none;">
+            <button type="button" class="btn btn-success btn-block" (click)="file.click()" [disabled]="attachmentUploadProgress > 0 && attachmentUploadProgress < 100">{{attachmentUploadProgressString}}</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col text-center">
+            <table class="table table-sm text-center" *ngIf="attachmentListCount > 0">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">ID</th>
+                  <th scope="col">Filename</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let attachment of attachmentList; index as i;">
+                  <th scope="row">{{i + 1}}</th>
+                  <th>{{attachment.id}}</th>
+                  <th>{{attachment.filename}}</th>
+                  <td>
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                      <button class="btn btn-primary btn-sm" (click)="readAttachment(attachment.id)"><i class="fas fa-save"></i></button>
+                      <button class="btn btn-danger btn-sm" (click)="removeAttachment(attachment.id)"><i class="fas fa-trash"></i></button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <main role="main" class="container">
   <div class="d-flex flex-column align-items-center" style="height: 100%;">
     <div class="my-auto p-2 col-xs-12 col-sm-8" style="flex: none;">
@@ -240,6 +297,7 @@
                   <div class="btn-group">
                     <button class="btn btn-primary" [disabled]="!noteForm.valid" (click)="updateNote()"><i class="fas fa-save"></i> Save</button>
                     <button class="btn btn-primary" data-toggle="modal" data-target="#sharingModal"><i class="fas fa-share-alt"></i> Share</button>
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#attachmentsModal"><i class="fas fa-share-alt"></i> Attachments</button>
                   </div>
                 </div>
               </div>
@@ -261,12 +319,6 @@
                   }"></textarea>
                 </div>
               </form>
-              <div class="row">
-                <div class="col">
-                  <input type="file" #file placeholder="Choose file" (change)="addAttachment(file.files)" style="display:none;">
-                  <button type="button" class="btn btn-success" (click)="file.click()" [disabled]="attachmentUploadProgress > 0 && attachmentUploadProgress < 100">{{attachmentUploadProgressString}}</button>
-                </div>
-              </div>
             </div>
           </div>
         </div>
