@@ -288,3 +288,6 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+backend/NotesWebAPI/Resources/*
+*.docx
