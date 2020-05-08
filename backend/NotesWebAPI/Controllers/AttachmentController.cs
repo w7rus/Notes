@@ -145,7 +145,7 @@ namespace NotesWebAPI.Controllers
         //Delete Attachment
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpDelete("{noteId}/{attachmentId}")]
-        public async Task<ActionResult> DeleteShare([Required] int noteId, [Required] int attachmentId)
+        public async Task<ActionResult> DeleteAttachment([Required] int noteId, [Required] int attachmentId)
         {
             try
             {
