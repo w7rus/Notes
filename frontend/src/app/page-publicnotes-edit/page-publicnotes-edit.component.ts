@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpEventType } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 
 interface Share {
@@ -13,6 +13,11 @@ interface Note {
   id: number,
   title: string,
   body: string
+}
+
+interface Attachment {
+  id: number,
+  filename: string
 }
 
 @Component({
@@ -34,6 +39,15 @@ export class PagePublicnotesEditComponent implements OnInit {
   noteUpdateFailString: string = "";
 
   share: Share;
+
+  attachmentList: Attachment[];
+  attachmentListCount: number = 0;
+  attachmentUploadSuccess = false;
+  attachmentUploadSuccessString = "";
+  attachmentUploadFail = false;
+  attachmentUploadFailString = "";
+  attachmentUploadProgress: number = 0;
+  attachmentUploadProgressString: string = "Upload File";
 
   constructor(
     private http: HttpClient,
@@ -99,6 +113,74 @@ export class PagePublicnotesEditComponent implements OnInit {
     });
   }
 
+  //Attachments
+  addAttachment(files) {
+    if (files.length === 0) {
+      return;
+    }
+
+    let fileToUpload = <File>files[0];
+    const formData = new FormData();
+    formData.append('file', fileToUpload);
+
+    this.http.post("http://localhost:5000/api/publicattachment/" + this.noteId, formData, {reportProgress: true, observe: 'events'}).subscribe(response => {
+      if (response.type === HttpEventType.UploadProgress) {
+        this.attachmentUploadProgress = Math.round(100 * response.loaded / response.total);
+        this.attachmentUploadProgressString = "Uploading... " + this.attachmentUploadProgress
+      } else if (response.type === HttpEventType.Response) {
+        this.attachmentUploadProgressString = "Upload File";
+        this.attachmentUploadSuccess = true;
+        setTimeout(() => {
+          this.attachmentUploadSuccess = false;
+        }, 5000);
+        this.listAttachments();
+      }
+    }, err => {
+      this.attachmentUploadSuccess = true;
+      this.attachmentUploadFail = true;
+      this.attachmentUploadFailString = err.error;
+      setTimeout(() => {
+        this.attachmentUploadFail = false;
+        this.attachmentUploadFailString = "";
+      }, 5000);
+      this.attachmentUploadProgressString = "Upload File";
+    });
+  }
+
+  listAttachments() {
+    // Get Attachment
+    this.http.get("http://localhost:5000/api/publicattachment/findAttachments/" + this.noteId, {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json"
+      })
+    }).subscribe(response => {
+      this.attachmentList = <Attachment[]>response;
+      this.attachmentListCount = this.attachmentList.length
+      console.log(this.attachmentListCount)
+    }, err => {
+      console.log(err);
+    });
+  }
+
+  readAttachment(attachmentid: number) {
+    window.open("http://localhost:5000/api/attachment/" + attachmentid)
+  }
+
+  removeAttachment(attachmentid: number) {
+    console.log("removed attachment" + attachmentid)
+
+    // Get Shares for Note
+    this.http.delete("http://localhost:5000/api/publicattachment/" + this.noteId + "/" + attachmentid, {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json"
+      })
+    }).subscribe(response => {
+      this.listAttachments();
+    }, err => {
+      console.log(err);
+    });
+  }
+
   //Init
   ngOnInit(): void {
     this.noteForm = this.formBuilder.group({
@@ -108,5 +190,6 @@ export class PagePublicnotesEditComponent implements OnInit {
 
     this.readNote();
     this.readShares();
+    this.listAttachments();
   }
 }
